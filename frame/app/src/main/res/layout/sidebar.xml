@@ -104,7 +104,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="26dp"
-                    android:text="STORAGE"
+                    android:text="使用空间"
                     android:textColor="#ffffff"
                     android:textSize="12sp" />
             </RelativeLayout>
@@ -140,7 +140,7 @@
                     android:id="@+id/sidebarMetricTempLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="EON TEMP"
+                    android:text="电池温度"
                     android:textColor="#ffffff"
                     android:layout_marginTop="26dp"
                     android:textSize="12sp" />
@@ -166,7 +166,7 @@
                 android:minHeight="32dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:text="NO PANDA"
+                android:text="PANDA\n未连接"
                 android:textAlignment="center"
                 android:textColor="#ffffff"
                 android:textStyle="bold"
