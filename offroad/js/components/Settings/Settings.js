@@ -10,6 +10,7 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import ChffrPlus from '../../native/ChffrPlus';
+import UploadProgressTimer from '../../timers/UploadProgressTimer';
 import { formatSize } from '../../utils/bytes';
 import { mpsToKph, mpsToMph, kphToMps, mphToMps } from '../../utils/conversions';
 import { Params } from '../../config';
@@ -76,6 +77,7 @@ class Settings extends Component {
     }
 
     async componentWillMount() {
+        UploadProgressTimer.start(this.props.dispatch);
         await this.props.refreshParams();
         const {
             isMetric,
@@ -89,6 +91,10 @@ class Settings extends Component {
         } else {
             this.setState({ speedLimitOffsetInt: parseInt(mpsToMph(speedLimitOffset)) })
         }
+    }
+
+    componentWillUnmount() {
+        UploadProgressTimer.stop();
     }
 
     handleExpanded(key) {
@@ -252,6 +258,7 @@ class Settings extends Component {
                 SpeedLimitOffset: speedLimitOffset,
                 OpenpilotEnabledToggle: openpilotEnabled,
                 Passive: isPassive,
+                IsLdwEnabled: isLaneDepartureWarningEnabled,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -278,11 +285,20 @@ class Settings extends Component {
                                 title='启用 openpilot'
                                 value={ !!parseInt(openpilotEnabled) }
                                 iconSource={ Icons.openpilot }
-                                description='使用 openpilot 的自适应巡航功能和车道保持功能，开启后您需要保持注意力集中，设置更改在重新启动车子后生效。'
+                                description='使用 openpilot 的自适应巡航功能和车道保持功能，开启后您需要保持注意力集中，设置更改在重新启动车辆后生效。'
                                 isExpanded={ expandedCell == 'openpilot_enabled' }
                                 handleExpanded={ () => this.handleExpanded('openpilot_enabled') }
                                 handleChanged={ this.props.setOpenpilotEnabled } />
                         ) : null }
+                        <X.TableCell
+                            type='switch'
+                            title='启用车道偏离预警'
+                            value={ !!parseInt(isLaneDepartureWarningEnabled) }
+                            iconSource={ Icons.warning }
+                            description='车速在 50 km/h 以上，且未打转向灯的情况下，如果检测到车辆驶出当前车道线时，则会发出车道偏离警告，并控制转向将车辆拉回车道线内。'
+                            isExpanded={ expandedCell == 'ldw' }
+                            handleExpanded={ () => this.handleExpanded('ldw') }
+                            handleChanged={ this.props.setLaneDepartureWarningEnabled } />
                         <X.TableCell
                             type='switch'
                             title='上传驾驶员的驾驶录像'
@@ -344,7 +360,7 @@ class Settings extends Component {
                             value={ !!parseInt(limitSetSpeed) }
                             isDisabled={ !parseInt(hasLongitudinalControl) }
                             iconSource={ Icons.mapSpeed }
-                            description='使用地图来控制当前的车速。当您见到一个弯道图示时，代表车子将会自动减速来过前方的弯道。当取得地图数据后，车速将被限制在地图上的速限 (外加速限补偿设置)。这功能需要有网络连接以及能让 openpilot 横向控制的对应车种。当图资下载完成后，您将会看到一个地图图示。'
+                            description='使用地图来控制当前的车速。当您见到一个弯道图示时，代表车辆将会自动减速来过前方的弯道。当取得地图数据后，车速将被限制在地图上的速限 (外加速限补偿设置)。这功能需要有网络连接以及能让 openpilot 横向控制的对应车种。当图资下载完成后，您将会看到一个地图图示。'
                             isExpanded={ expandedCell == 'limitSetSpeed' }
                             handleExpanded={ () => this.handleExpanded('limitSetSpeed') }
                             handleChanged={ this.props.setLimitSetSpeed } />
@@ -381,7 +397,7 @@ class Settings extends Component {
                     <View>
                         <X.Table>
                             <X.TableCell
-                                title='设备已绑定'
+                                title='帐户绑定'
                                 value={ isPaired ? 'Yes' : 'No' } />
                             { isPaired ? (
                                 <X.Text
@@ -447,7 +463,7 @@ class Settings extends Component {
                             type='custom'
                             title='摄像头校准'
                             iconSource={ Icons.calibration }
-                            description='摄像头是一直在后台自动校准的，只有当您的 EON 发出校准无效的信息或是您将 EON 安装至不同的位置/车子时，才需要重设校准。'
+                            description='摄像头是一直在后台自动校准的，只有当您的 EON 提示校准无效或者您将 EON 安装至不同的车辆/位置时，才需要重新校准。'
                             isExpanded={ expandedCell == 'calibration' }
                             handleExpanded={ () => this.handleExpanded('calibration') }>
                             <X.Button
@@ -455,7 +471,7 @@ class Settings extends Component {
                                 color='settingsDefault'
                                 onPress={ this.handlePressedResetCalibration  }
                                 style={ { minWidth: '100%' } }>
-                                Reset
+                                重新校准
                             </X.Button>
                         </X.TableCell>
                     </X.Table>
@@ -499,11 +515,6 @@ class Settings extends Component {
     }
 
     renderNetworkSettings() {
-        const {
-          params: {
-            IsUploadVideoOverCellularEnabled: isCellularUploadEnabled,
-          },
-        } = this.props;
         const { expandedCell } = this.state;
         return (
             <View style={ Styles.settings }>
@@ -519,17 +530,6 @@ class Settings extends Component {
                     ref="settingsScrollView"
                     style={ Styles.settingsWindow }>
                     <X.Line color='transparent' spacing='tiny' />
-                    <X.Table color='darkBlue'>
-                        <X.TableCell
-                            type='switch'
-                            title='允许使用 SIM 卡流量上传数据'
-                            value={ !!parseInt(isCellularUploadEnabled) }
-                            iconSource={ Icons.network }
-                            description='如果设备安装了 SIM 卡，并且没有其他网络可用时，会使用 SIM 卡流量上传驾驶记录，如果你的 SIM 卡不是无线流量套餐，超出流量会带来额外的费用。'
-                            isExpanded={ expandedCell == 'cellular_enabled' }
-                            handleExpanded={ () => this.handleExpanded('cellular_enabled') }
-                            handleChanged={ this.props.setCellularEnabled } />
-                    </X.Table>
                     <X.Table spacing='big' color='darkBlue'>
                         <X.Button
                             size='small'
@@ -560,6 +560,7 @@ class Settings extends Component {
                 Passive: isPassive,
                 PandaFirmware: pandaFirmware,
                 PandaDongleId: pandaDongleId,
+                CommunityFeaturesToggle: communityFeatures,
             },
         } = this.props;
         const { expandedCell } = this.state;
@@ -577,27 +578,23 @@ class Settings extends Component {
                 <ScrollView
                     ref="settingsScrollView"
                     style={ Styles.settingsWindow }>
-                    <X.Table spacing='none'>
-                        <X.TableCell
-                            title='版本'
-                            value={ `${ software } v${ version }` } />
-                        <X.TableCell
-                            title='Git 分支'
-                            value={ gitBranch } />
-                        <X.TableCell
-                            title='Git 修订版'
-                            value={ gitRevision.slice(0, 12) }
-                            valueTextSize='tiny' />
-                        <X.TableCell
-                            title='Panda 固件'
-                            value={ pandaFirmware != null ? pandaFirmware : 'N/A' }
-                            valueTextSize='tiny' />
-                        <X.TableCell
-                            title='Panda Dongle ID'
-                            value={ (pandaDongleId != null && pandaDongleId != "unprovisioned") ? pandaDongleId : 'N/A' }
-                            valueTextSize='tiny' />
-                    </X.Table>
                     <X.Table color='darkBlue'>
+                        <X.TableCell
+                            type='switch'
+                            title='启用社区功能'
+                            value={ !!parseInt(communityFeatures) }
+                            iconSource={ Icons.developer }
+                            descriptionExtra={
+                              <X.Text color='white' size='tiny'>
+                                  使用来自开源社区开发维护的功能（未通过官方标准安全验证）{'\n'}
+                                  * 通用车型支持{'\n'}
+                                  * 丰田车型支持断开 DSU 模块{'\n'}
+                                  * 油门踏板拦截器支持{'\n'}
+                              </X.Text>
+                            }
+                            isExpanded={ expandedCell == 'communityFeatures' }
+                            handleExpanded={ () => this.handleExpanded('communityFeatures') }
+                            handleChanged={ this.props.setCommunityFeatures } />
                         <X.TableCell
                             type='switch'
                             title='启用 SSH'
@@ -623,6 +620,26 @@ class Settings extends Component {
                             </X.Button>
                         </X.TableCell>
                     </X.Table>
+                    <X.Table spacing='none'>
+                        <X.TableCell
+                            title='版本'
+                            value={ `${ software } v${ version }` } />
+                        <X.TableCell
+                            title='Git 分支'
+                            value={ gitBranch } />
+                        <X.TableCell
+                            title='Git 修订版'
+                            value={ gitRevision.slice(0, 12) }
+                            valueTextSize='tiny' />
+                        <X.TableCell
+                            title='Panda 固件'
+                            value={ pandaFirmware != null ? pandaFirmware : 'N/A' }
+                            valueTextSize='tiny' />
+                        <X.TableCell
+                            title='Panda Dongle ID'
+                            value={ (pandaDongleId != null && pandaDongleId != "unprovisioned") ? pandaDongleId : 'N/A' }
+                            valueTextSize='tiny' />
+                    </X.Table>
                     <X.Table color='darkBlue' padding='big'>
                         <X.Button
                             color='settingsDefault'
@@ -635,6 +652,7 @@ class Settings extends Component {
             </View>
         )
     }
+
 
     renderSshInput() {
         let { githubUsername, authKeysUpdateState } = this.state;
@@ -655,7 +673,7 @@ class Settings extends Component {
                         weight='semibold'
                         size='small'
                         style={ Styles.githubUsernameInputLabel }>
-                        GitHub Username
+                        GitHub 用户名
                     </X.Text>
                     <TextInput
                         style={ Styles.githubUsernameInput }
@@ -672,7 +690,9 @@ class Settings extends Component {
                         isDisabled={ !githubUsernameIsValid }
                         onPress={ this.writeSshKeys }
                         style={ Styles.githubUsernameSaveButton }>
-                        <X.Text color='white' size='small' style={ Styles.githubUsernameInputSave }>Save</X.Text>
+                        <X.Text color='white' size='small' style={ Styles.githubUsernameInputSave }>
+                        保存
+                        </X.Text>
                     </X.Button>
                     { authKeysUpdateState !== null &&
                         <View style={ Styles.githubUsernameInputStatus }>
@@ -694,7 +714,9 @@ class Settings extends Component {
                             color='settingsDefault'
                             onPress={ this.clearSshKeys }
                             style={ Styles.githubUsernameSaveButton }>
-                            <X.Text color='white' size='small' style={ Styles.githubUsernameInputSave }>Remove all</X.Text>
+                            <X.Text color='white' size='small' style={ Styles.githubUsernameInputSave }>
+                            全部删除
+                            </X.Text>
                         </X.Button>
                     </View>
                 </View>
@@ -770,6 +792,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    dispatch,
     navigateHome: async () => {
         dispatch(resetToLaunch());
     },
@@ -815,9 +838,6 @@ const mapDispatchToProps = dispatch => ({
     setRecordFront: (recordFront) => {
         dispatch(updateParam(Params.KEY_RECORD_FRONT, (recordFront | 0).toString()));
     },
-    setCellularEnabled: (useCellular) => {
-        dispatch(updateParam(Params.KEY_UPLOAD_CELLULAR, (useCellular | 0).toString()));
-    },
     setSshEnabled: (isSshEnabled) => {
         dispatch(updateSshEnabled(!!isSshEnabled));
     },
@@ -829,6 +849,21 @@ const mapDispatchToProps = dispatch => ({
     },
     setSpeedLimitOffset: (speedLimitOffset) => {
         dispatch(updateParam(Params.KEY_SPEED_LIMIT_OFFSET, (speedLimitOffset).toString()));
+    },
+    setCommunityFeatures: (communityFeatures) => {
+        if (communityFeatures == 1) {
+            Alert.alert('启用社区功能', '开源社区开发维护的功能，未通过官方标准安全验证，请谨慎使用。', [
+                { text: '取消', onPress: () => {}, style: 'cancel' },
+                { text: '确定', onPress: () => {
+                    dispatch(updateParam(Params.KEY_COMMUNITY_FEATURES, (communityFeatures | 0).toString()));
+                } },
+            ]);
+        } else {
+            dispatch(updateParam(Params.KEY_COMMUNITY_FEATURES, (communityFeatures | 0).toString()));
+        }
+    },
+    setLaneDepartureWarningEnabled: (isLaneDepartureWarningEnabled) => {
+        dispatch(updateParam(Params.KEY_LANE_DEPARTURE_WARNING_ENABLED, (isLaneDepartureWarningEnabled | 0).toString()));
     },
     deleteParam: (param) => {
         dispatch(deleteParam(param));

@@ -1,5 +1,6 @@
 import { NavigationActions } from 'react-navigation';
 import { AsyncStorage } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import { request as Request, devices as Devices } from '@commaai/comma-api';
 import ChffrPlus from '../../native/ChffrPlus';
 import { Params } from '../../config';
@@ -12,7 +13,6 @@ export const ACTION_THERMAL_DATA_CHANGED = 'ACTION_THERMAL_DATA_CHANGED';
 export const ACTION_WIFI_STATE_CHANGED = 'ACTION_WIFI_STATE_CHANGED';
 export const ACTION_DEVICE_IDS_AVAILABLE = 'ACTION_DEVICE_IDS_AVAILABLE';
 export const ACTION_DEVICE_REFRESHED = 'ACTION_DEVICE_REFRESHED';
-export const ACTION_DEVICE_IS_PAIRED_CHANGED = 'ACTION_DEVICE_IS_PAIRED_CHANGED';
 export const ACTION_ACCOUNT_CHANGED = 'ACTION_ACCOUNT_CHANGED';
 export const ACTION_DEVICE_STATS_CHANGED = 'ACTION_DEVICE_STATS_CHANGED';
 export const ACTION_UPDATE_IS_AVAILABLE_CHANGED = 'ACTION_UPDATE_IS_AVAILABLE_CHANGED';
@@ -91,16 +91,7 @@ export function setDeviceIds() {
     }
 }
 
-export function updateDeviceIsPaired(deviceIsPaired) {
-    return async (dispatch, getState) => {
-        dispatch({
-            type: ACTION_DEVICE_IS_PAIRED_CHANGED,
-            deviceIsPaired,
-        });
-    }
-}
-
-export function updateUpdateIsAvailable(deviceIsPaired) {
+export function updateUpdateIsAvailable() {
     return async (dispatch, getState) => {
         const isUpdateAvailableStr = await ChffrPlus.readParam(Params.KEY_IS_UPDATE_AVAILABLE);
         const updateIsAvailable = ((isUpdateAvailableStr && isUpdateAvailableStr.trim() === "1") || false);
@@ -158,10 +149,14 @@ export function updateSshEnabled(isSshEnabled) {
 export function refreshDeviceInfo() {
     return async (dispatch, getState) => {
         const dongleId = await ChffrPlus.readParam("DongleId");
+        Sentry.setUser({
+          dongleId,
+        });
+
         const token = await ChffrPlus.createJwt({"identity": dongleId});
         await Request.configure(token);
-        const device =  await Devices.fetchDevice(dongleId);
 
+        const device =  await Devices.fetchDevice(dongleId);
         dispatch({
             type: ACTION_DEVICE_REFRESHED,
             device,
