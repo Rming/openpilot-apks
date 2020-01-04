@@ -292,7 +292,7 @@ class Home extends Component {
                                       color='white'
                                       size='tiny'
                                       weight='semibold'>
-                                      上周
+                                      最近 7 天
                                   </X.Text>
                               </View>
                               <View style={ Styles.homeBodyStatsRow }>
