@@ -234,7 +234,12 @@ class MainActivity : Activity(), NewDestinationReceiverDelegate, OffroadNavigati
                         if (activeApp == UiLayoutState.App.HOME) {
                             startInnerActivity(OFFROAD_APP)
                         }
-                        showActivityView()
+                        if (ChffrPlusParams.readParam("UpdateAvailable") == "1") {
+                            showActivityView()
+                        } else {
+                            activityOverlayManager!!.show(ActivityOverlayManager.OVERLAY_THERMAL_WARNING)
+                            hideActivityView()
+                        }
                     }
                 }
 
