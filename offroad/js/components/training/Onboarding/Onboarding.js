@@ -14,7 +14,9 @@ const Step = {
     OB_SPLASH: 'OB_SPLASH',
     OB_INTRO: 'OB_INTRO',
     OB_SENSORS: 'OB_SENSORS',
-    OB_CONTROLS: 'OB_CONTROLS',
+    OB_ENGAGE: 'OB_ENGAGE',
+    OB_LANECHANGE: 'OB_LANECHANGE',
+    OB_DISENGAGE: 'OB_DISENGAGE',
     OB_OUTRO: 'OB_OUTRO',
 };
 
@@ -39,6 +41,10 @@ class Onboarding extends Component {
         };
     }
 
+    componentWillMount() {
+        this.handleEngagedMocked(false);
+    }
+
     componentWillUnmount() {
         this.handleEngagedMocked(false);
     }
@@ -50,7 +56,6 @@ class Onboarding extends Component {
         }, () => {
             return this.setState({ step });
         });
-        this.handleEngagedMocked(false);
     }
 
     setStepPoint(stepPoint) {
@@ -100,31 +105,7 @@ class Onboarding extends Component {
         }
     }
 
-    handleSensorVisualPressed(visual) {
-        const { stepChecks } = this.state;
-        const hasCheck = (stepChecks.indexOf(visual) > -1);
-        if (stepChecks.length > 0 && !hasCheck) {
-            this.animatePhotoOffset(0);
-            this.setState({ stepChecks: [...stepChecks, visual] });
-            this.setStepPoint(0);
-            return this.setStep('OB_CONTROLS');
-        } else {
-            this.setState({ stepChecks: [...stepChecks, visual] });
-            switch(visual) {
-                case 'camera':
-                    this.animatePhotoCycled(100);
-                    this.animateLeadEntered(100);
-                    return this.setStepPoint(2); break;
-                case 'radar':
-                    this.animatePhotoOffset(0);
-                    this.animateLeadEntered(0);
-                    this.animatePhotoCycled(0);
-                    return this.setStepPoint(0); break;
-            }
-        }
-    }
-
-    handleControlsRadioPressed(option) {
+    handleEngageRadioPressed(option) {
         switch(option) {
             case 'index':
                 this.animatePhotoOffset(0);
@@ -139,18 +120,73 @@ class Onboarding extends Component {
                 this.animatePhotoOffset(100);
                 this.animatePhotoCycled(100);
                 return this.setStepPoint(2); break;
-            case 'limitations':
-                this.animatePhotoOffset(100);
-                this.animatePhotoCycled(100);
-                return this.setStepPoint(3); break;
-            case 'pedal':
-                this.animatePhotoOffset(100);
-                this.animatePhotoCycledLast(100);
-                return this.setStepPoint(4); break;
         }
     }
 
-    handleControlsVisualPressed(visual) {
+    handleLaneChangeRadioPressed(option) {
+        switch(option) {
+            case 'index':
+                this.animatePhotoOffset(0);
+                this.animatePhotoCycled(0);
+                this.animatePhotoCycledLast(0);
+                return this.setStepPoint(0); break;
+            case 'start':
+                this.animatePhotoOffset(100);
+                this.animatePhotoCycled(0);
+                this.animatePhotoCycledLast(0);
+                return this.setStepPoint(1); break;
+            case 'perform':
+                this.animatePhotoOffset(0);
+                this.animatePhotoCycled(100);
+                this.animatePhotoCycledLast(0);
+                return this.setStepPoint(2); break;
+        }
+    }
+
+    handleDisengageRadioPressed(option) {
+        switch(option) {
+            case 'index':
+                this.animatePhotoOffset(0);
+                this.animatePhotoCycled(0);
+                this.animatePhotoCycledLast(0);
+                return this.setStepPoint(0); break;
+            case 'limitations':
+                this.animatePhotoOffset(100);
+                this.animatePhotoCycled(0);
+                return this.setStepPoint(1); break;
+            case 'disengage':
+                this.animatePhotoOffset(100);
+                this.animatePhotoCycledLast(100);
+                return this.setStepPoint(2); break;
+        }
+    }
+
+    handleSensorVisualPressed(visual) {
+        const { stepChecks } = this.state;
+        const hasCheck = (stepChecks.indexOf(visual) > -1);
+        if (stepChecks.length > 0 && !hasCheck) {
+            this.animatePhotoOffset(0);
+            this.setState({ stepChecks: [...stepChecks, visual] });
+            this.setStepPoint(0);
+            return this.setStep('OB_ENGAGE');
+        } else {
+            this.setState({ stepChecks: [...stepChecks, visual] });
+            switch(visual) {
+                case 'camera':
+                    this.animatePhotoCycled(100);
+                    this.animateLeadEntered(100);
+                    return this.setStepPoint(2); break;
+                case 'radar':
+                    this.animatePhotoOffset(0);
+                    this.animateLeadEntered(0);
+                    this.animatePhotoCycled(0);
+                    this.setStepPoint(0);
+                    return this.setStep('OB_ENGAGE'); break;
+            }
+        }
+    }
+
+    handleEngageVisualPressed(visual) {
         const { stepChecks } = this.state;
         const hasCheck = (stepChecks.indexOf(visual) > -1);
         this.setState({ stepChecks: [...stepChecks, visual] });
@@ -163,13 +199,41 @@ class Onboarding extends Component {
                 this.animatePhotoOffset(100);
                 this.animatePhotoCycled(100);
                 this.animatePhotoCycledLast(100);
-                return this.setStepPoint(3); break;
+                this.setStepPoint(0);
+                return this.setStep('OB_LANECHANGE'); break;
+        }
+    }
+
+    handleLaneChangeVisualPressed(visual) {
+        const { stepChecks } = this.state;
+        const hasCheck = (stepChecks.indexOf(visual) > -1);
+        this.setState({ stepChecks: [...stepChecks, visual] });
+        switch(visual) {
+            case 'start':
+                this.animatePhotoOffset(100);
+                this.animatePhotoCycled(100);
+                this.animatePhotoCycledLast(100);
+                return this.setStepPoint(2); break;
+            case 'perform':
+                this.animatePhotoOffset(100);
+                this.animatePhotoCycled(100);
+                this.animatePhotoCycledLast(100);
+                this.setStepPoint(0);
+                return this.setStep('OB_DISENGAGE'); break;
+        }
+    }
+
+    handleDisengageVisualPressed(visual) {
+        const { stepChecks } = this.state;
+        const hasCheck = (stepChecks.indexOf(visual) > -1);
+        this.setState({ stepChecks: [...stepChecks, visual] });
+        switch(visual) {
             case 'limitations':
                 this.animatePhotoOffset(100);
                 this.animatePhotoCycled(100);
                 this.animatePhotoCycledLast(100);
-                return this.setStepPoint(4); break;
-            case 'pedal':
+                return this.setStepPoint(2); break;
+            case 'disengage':
                 this.animatePhotoOffset(0);
                 this.animatePhotoCycled(0);
                 this.animatePhotoCycledLast(0);
@@ -367,7 +431,7 @@ class Onboarding extends Component {
                         isChecked={ stepChecks.includes('camera') }
                         hasAppend={ true }
                         onPress={ () => this.handleSensorRadioPressed('camera') }
-                        label='EON 的摄像头' />
+                        label='设备摄像头' />
                     <X.RadioField
                         size='big'
                         color='white'
@@ -394,7 +458,7 @@ class Onboarding extends Component {
                     openpilot 的传感器
                 </X.Button>
                 <X.Text size='medium' color='white' weight='bold'>
-                    EON 的摄像头
+                    设备摄像头
                 </X.Text>
                 <X.Text
                     size='small' color='white' weight='light'
@@ -463,18 +527,6 @@ class Onboarding extends Component {
         )
     }
 
-    renderSensorsStepPoint() {
-        const { stepPoint } = this.state;
-        switch (stepPoint) {
-            case 0:
-                return this.renderSensorsStepPointIndex(); break;
-            case 1:
-                return this.renderSensorsStepPointCamera(); break;
-            case 2:
-                return this.renderSensorsStepPointRadar(); break;
-        }
-    }
-
     renderSensorsStep() {
         return (
             <X.Entrance style={ Styles.onboardingStep }>
@@ -483,7 +535,7 @@ class Onboarding extends Component {
         )
     }
 
-    renderControlsStepPointIndex() {
+    renderEngagingStepPointIndex() {
         const { stepChecks } = this.state;
         return (
             <View style={ Styles.onboardingStepPoint }>
@@ -508,42 +560,30 @@ class Onboarding extends Component {
                     </X.Text>
                     <X.Text
                         size='smallish' color='white' weight='light'
-                        style={ Styles.onboardingStepContextSmall }>
+                        style={ Styles.onboardingStepContext }>
                         按下巡航按钮启动，踩下油门或刹车取消。
                     </X.Text>
                     <X.RadioField
+                        size='big'
                         color='white'
                         isChecked={ stepChecks.includes('cruise') }
                         hasAppend={ true }
-                        onPress={ () => this.handleControlsRadioPressed('cruise') }
+                        onPress={ () => this.handleEngageRadioPressed('cruise') }
                         label='启用 openpilot' />
                     <X.RadioField
+                        size='big'
                         color='white'
                         isDisabled={ !stepChecks.includes('cruise') }
                         isChecked={ stepChecks.includes('monitoring') }
                         hasAppend={ true }
-                        onPress={ () => this.handleControlsRadioPressed('monitoring') }
+                        onPress={ () => this.handleEngageRadioPressed('monitoring') }
                         label='驾驶监控' />
-                    <X.RadioField
-                        color='white'
-                        isDisabled={ !stepChecks.includes('monitoring') }
-                        isChecked={ stepChecks.includes('limitations') }
-                        hasAppend={ true }
-                        onPress={ () => this.handleControlsRadioPressed('limitations') }
-                        label='功能限制' />
-                    <X.RadioField
-                        color='white'
-                        isDisabled={ !stepChecks.includes('limitations') }
-                        isChecked={ stepChecks.includes('pedal') }
-                        hasAppend={ true }
-                        onPress={ () => this.handleControlsRadioPressed('pedal') }
-                        label='退出 openpilot' />
                 </View>
             </View>
         )
     }
 
-    renderControlsStepPointEngage() {
+    renderEngagingStepPointEngage() {
         return (
             <X.Entrance
                 transition='fadeInLeft'
@@ -552,7 +592,7 @@ class Onboarding extends Component {
                 <X.Button
                     size='small' color='ghost' textWeight='light'
                     style={ Styles.onboardingStepPointCrumb }
-                    onPress={ () => this.handleControlsRadioPressed('index') }>
+                    onPress={ () => this.handleEngageRadioPressed('index') }>
                     openpilot 控制
                 </X.Button>
                 <X.Text size='medium' color='white' weight='bold'>
@@ -579,7 +619,7 @@ class Onboarding extends Component {
         )
     }
 
-    renderControlsStepPointMonitoring() {
+    renderEngagingStepPointMonitoring() {
         return (
             <X.Entrance
                 transition='fadeInLeft'
@@ -589,7 +629,7 @@ class Onboarding extends Component {
                     <X.Button
                         size='small' color='ghost' textWeight='light'
                         style={ Styles.onboardingStepPointCrumb }
-                        onPress={ () => this.handleControlsRadioPressed('index') }>
+                        onPress={ () => this.handleEngageRadioPressed('index') }>
                         openpilot 控制
                     </X.Button>
                     <X.Text size='medium' color='white' weight='bold'>
@@ -617,7 +657,55 @@ class Onboarding extends Component {
         )
     }
 
-    renderControlsStepPointLimitations() {
+    renderLaneChangeStepPointIndex() {
+        const { stepChecks } = this.state;
+        return (
+            <View style={ Styles.onboardingStepPoint }>
+                <View style={ Styles.onboardingStepPointChain }>
+                    <X.Button
+                        size='small' color='ghost'
+                        style={ Styles.onboardingStepPointChainPrevious }
+                        onPress={ () => this.setStep('OB_ENGAGE') }>
+                        <X.Image
+                            source={ require('../../../img/icon_chevron_right.png') }
+                            style={ Styles.onboardingStepPointChainPreviousIcon } />
+                    </X.Button>
+                    <View style={ Styles.onboardingStepPointChainNumber }>
+                        <X.Text color='white' weight='semibold'>
+                            4
+                        </X.Text>
+                    </View>
+                </View>
+                <View style={ Styles.onboardingStepPointBody }>
+                    <X.Text size='bigger' color='white' weight='bold'>
+                        openpilot 可以在你的协助下切换车道。
+                    </X.Text>
+                    <X.Text
+                        size='smallish' color='white' weight='light'
+                        style={ Styles.onboardingStepContextSmall }>
+                          openpilot 无法确认周边车道是否安全，需要你自己观察确认，无论旁边车道是否有车，openpilot 都会切换成车道。
+                    </X.Text>
+                    <X.RadioField
+                        size='big'
+                        color='white'
+                        isChecked={ stepChecks.includes('start') }
+                        hasAppend={ true }
+                        onPress={ () => this.handleLaneChangeRadioPressed('start') }
+                        label='开始切换车道' />
+                    <X.RadioField
+                        size='big'
+                        color='white'
+                        isDisabled={ !stepChecks.includes('start') }
+                        isChecked={ stepChecks.includes('perform') }
+                        hasAppend={ true }
+                        onPress={ () => this.handleLaneChangeRadioPressed('perform') }
+                        label='执行车道切换' />
+                </View>
+            </View>
+        )
+    }
+
+    renderLaneChangeStepPointStart() {
         return (
             <X.Entrance
                 transition='fadeInLeft'
@@ -627,8 +715,132 @@ class Onboarding extends Component {
                     <X.Button
                         size='small' color='ghost' textWeight='light'
                         style={ Styles.onboardingStepPointCrumb }
-                        onPress={ () => this.handleControlsRadioPressed('index') }>
+                        onPress={ () => this.handleLaneChangeRadioPressed('index') }>
                         openpilot 控制
+                    </X.Button>
+                    <X.Text size='medium' color='white' weight='bold'>
+                        执行车道切换
+                    </X.Text>
+                    <X.Text
+                        size='small' color='white' weight='light'
+                        style={ Styles.onboardingStepContextSmaller }>
+                        启用 openpilot 以后，打开转向灯，检查周边车道情况，确认可以安全的切换车道。
+                    </X.Text>
+                    <X.Button color='ghost'
+                        style={ Styles.onboardingStepPointInstruction }
+                        onPress={ () => this.handleWrongGatePressed() }>
+                        <X.Text
+                            size='small' color='white' weight='semibold'
+                            style={ Styles.onboardingStepPointInstructionText }>
+                            点击转向灯
+                        </X.Text>
+                        <X.Image
+                            source={ require('../../../img/icon_chevron_right.png') }
+                            style={ Styles.onboardingStepPointInstructionIcon } />
+                    </X.Button>
+                </X.Entrance>
+            </X.Entrance>
+        )
+    }
+
+    renderLaneChangeStepPointPerform() {
+        return (
+            <X.Entrance
+                transition='fadeInLeft'
+                duration={ 1000 }
+                style={ Styles.onboardingStepPointSmall }>
+                <X.Entrance>
+                    <X.Button
+                        size='small' color='ghost' textWeight='light'
+                        style={ Styles.onboardingStepPointCrumb }
+                        onPress={ () => this.handleLaneChangeRadioPressed('index') }>
+                        openpilot 切换车道
+                    </X.Button>
+                    <X.Text size='medium' color='white' weight='bold'>
+                        开始切换车道
+                    </X.Text>
+                    <X.Text
+                        size='small' color='white' weight='light'
+                        style={ Styles.onboardingStepContextSmaller }>
+                        注意周边车道安全的情况下，同时打开转向灯，并转动方向盘开始切换车道。
+                    </X.Text>
+                    <X.Button color='ghost'
+                        style={ Styles.onboardingStepPointInstruction }
+                        onPress={ () => this.handleWrongGatePressed() }>
+                        <X.Text
+                            size='small' color='white' weight='semibold'
+                            style={ Styles.onboardingStepPointInstructionText }>
+                            点击方向盘
+                        </X.Text>
+                        <X.Image
+                            source={ require('../../../img/icon_chevron_right.png') }
+                            style={ Styles.onboardingStepPointInstructionIcon } />
+                    </X.Button>
+                </X.Entrance>
+            </X.Entrance>
+        )
+    }
+
+    renderDisengagingStepPointIndex() {
+        const { stepChecks } = this.state;
+        return (
+            <View style={ Styles.onboardingStepPoint }>
+                <View style={ Styles.onboardingStepPointChain }>
+                    <X.Button
+                        size='small' color='ghost'
+                        style={ Styles.onboardingStepPointChainPrevious }
+                        onPress={ () => this.setStep('OB_LANECHANGE') }>
+                        <X.Image
+                            source={ require('../../../img/icon_chevron_right.png') }
+                            style={ Styles.onboardingStepPointChainPreviousIcon } />
+                    </X.Button>
+                    <View style={ Styles.onboardingStepPointChainNumber }>
+                        <X.Text color='white' weight='semibold'>
+                            5
+                        </X.Text>
+                    </View>
+                </View>
+                <View style={ Styles.onboardingStepPointBody }>
+                    <X.Text size='bigger' color='white' weight='bold'>
+                        踩下刹车踏板退出 openpilot
+                    </X.Text>
+                    <X.Text
+                        size='smallish' color='white' weight='light'
+                        style={ Styles.onboardingStepContextSmall }>
+                        当遇到危险情况或者要驶出高速公路的时候，可以踩下刹车或油门退出 openpilot
+                    </X.Text>
+                    <X.RadioField
+                        size='big'
+                        color='white'
+                        isChecked={ stepChecks.includes('limitations') }
+                        hasAppend={ true }
+                        onPress={ () => this.handleDisengageRadioPressed('limitations') }
+                        label='功能限制' />
+                    <X.RadioField
+                        size='big'
+                        color='white'
+                        isDisabled={ !stepChecks.includes('limitations') }
+                        isChecked={ stepChecks.includes('disengage') }
+                        hasAppend={ true }
+                        onPress={ () => this.handleDisengageRadioPressed('disengage') }
+                        label='执行车道切换' />
+                </View>
+            </View>
+        )
+    }
+
+    renderDisengagingStepPointLimitations() {
+        return (
+            <X.Entrance
+                transition='fadeInLeft'
+                duration={ 1000 }
+                style={ Styles.onboardingStepPointSmall }>
+                <X.Entrance>
+                    <X.Button
+                        size='small' color='ghost' textWeight='light'
+                        style={ Styles.onboardingStepPointCrumb }
+                        onPress={ () => this.handleDisengageRadioPressed('index') }>
+                        退出 openpilot
                     </X.Button>
                     <X.Text size='medium' color='white' weight='bold'>
                         功能限制
@@ -655,7 +867,7 @@ class Onboarding extends Component {
         )
     }
 
-    renderControlsStepPointDisengage() {
+    renderDisengagingStepPointDisengage() {
         return (
             <X.Entrance
                 transition='fadeInLeft'
@@ -665,7 +877,7 @@ class Onboarding extends Component {
                     <X.Button
                         size='small' color='ghost' textWeight='light'
                         style={ Styles.onboardingStepPointCrumb }
-                        onPress={ () => this.handleControlsRadioPressed('index') }>
+                        onPress={ () => this.handleDisengageRadioPressed('index') }>
                         openpilot 控制
                     </X.Button>
                     <X.Text size='medium' color='white' weight='bold'>
@@ -693,26 +905,26 @@ class Onboarding extends Component {
         )
     }
 
-    renderControlsStepPoint() {
-        const { stepPoint } = this.state;
-        switch (stepPoint) {
-            case 0:
-                return this.renderControlsStepPointIndex(); break;
-            case 1:
-                return this.renderControlsStepPointEngage(); break;
-            case 2:
-                return this.renderControlsStepPointMonitoring(); break;
-            case 3:
-                return this.renderControlsStepPointLimitations(); break;
-            case 4:
-                return this.renderControlsStepPointDisengage(); break;
-        }
-    }
-
-    renderControlsStep() {
+    renderEngagingStep() {
         return (
             <X.Entrance style={ Styles.onboardingStep }>
-                { this.renderControlsStepPoint() }
+                { this.renderEngagingStepPoint() }
+            </X.Entrance>
+        )
+    }
+
+    renderLaneChangeStep() {
+        return (
+            <X.Entrance style={ Styles.onboardingStep }>
+                { this.renderLaneChangeStepPoint() }
+            </X.Entrance>
+        )
+    }
+
+    renderDisengagingStep() {
+        return (
+            <X.Entrance style={ Styles.onboardingStep }>
+                { this.renderDisengagingStepPoint() }
             </X.Entrance>
         )
     }
@@ -728,7 +940,7 @@ class Onboarding extends Component {
                 <X.Text
                     color='white' weight='light'
                     style={ Styles.onboardingStepContextSmaller }>
-                    您可以随时到 EON 设置里重新阅读使用教程，了解更多关于 openpilot 的信息，请查看 wiki 或加入 discord.comma.ai 社区交流。
+                    您可以随时到设置里重新阅读使用教程，了解更多关于 openpilot 的信息，请查看 wiki 或加入 discord.comma.ai 社区交流。
                 </X.Text>
                 <X.Line color='transparent' spacing='small' />
                 <View style={ Styles.onboardingActionsRow }>
@@ -752,6 +964,54 @@ class Onboarding extends Component {
         )
     }
 
+    renderSensorsStepPoint() {
+        const { stepPoint } = this.state;
+        switch (stepPoint) {
+            case 0:
+                return this.renderSensorsStepPointIndex(); break;
+            case 1:
+                return this.renderSensorsStepPointCamera(); break;
+            case 2:
+                return this.renderSensorsStepPointRadar(); break;
+        }
+    }
+
+    renderEngagingStepPoint() {
+        const { stepPoint } = this.state;
+        switch (stepPoint) {
+            case 0:
+                return this.renderEngagingStepPointIndex(); break;
+            case 1:
+                return this.renderEngagingStepPointEngage(); break;
+            case 2:
+                return this.renderEngagingStepPointMonitoring(); break;
+        }
+    }
+
+    renderLaneChangeStepPoint() {
+        const { stepPoint } = this.state;
+        switch (stepPoint) {
+            case 0:
+                return this.renderLaneChangeStepPointIndex(); break;
+            case 1:
+                return this.renderLaneChangeStepPointStart(); break;
+            case 2:
+                return this.renderLaneChangeStepPointPerform(); break;
+        }
+    }
+
+    renderDisengagingStepPoint() {
+        const { stepPoint } = this.state;
+        switch (stepPoint) {
+            case 0:
+                return this.renderDisengagingStepPointIndex(); break;
+            case 1:
+                return this.renderDisengagingStepPointLimitations(); break;
+            case 2:
+                return this.renderDisengagingStepPointDisengage(); break;
+        }
+    }
+
     renderStep() {
         const { step } = this.state;
         switch (step) {
@@ -761,8 +1021,12 @@ class Onboarding extends Component {
                 return this.renderIntroStep(); break;
             case Step.OB_SENSORS:
                 return this.renderSensorsStep(); break;
-            case Step.OB_CONTROLS:
-                return this.renderControlsStep(); break;
+            case Step.OB_ENGAGE:
+                return this.renderEngagingStep(); break;
+            case Step.OB_LANECHANGE:
+                return this.renderLaneChangeStep(); break;
+            case Step.OB_DISENGAGE:
+                return this.renderDisengagingStep(); break;
             case Step.OB_OUTRO:
                 return this.renderOutroStep(); break;
         }
@@ -911,7 +1175,7 @@ class Onboarding extends Component {
                     </View>
                 ) : null }
 
-                { step === 'OB_CONTROLS' ? (
+                { step === 'OB_ENGAGE' ? (
                     <View style={ Styles.onboardingVisuals }>
                         <Animated.Image
                             source={ require('../../../img/photo_wheel_buttons_01.jpg') }
@@ -926,7 +1190,7 @@ class Onboarding extends Component {
                               }] }>
                                 <X.Button
                                     style={ Styles.onboardingVisualCruiseTouchGateButton }
-                                    onPress={ () => { this.handleControlsVisualPressed('cruise') } } />
+                                    onPress={ () => { this.handleEngageVisualPressed('cruise') } } />
                             </Animated.View>
                         ) : null }
                         { stepPoint == 2 ? (
@@ -947,34 +1211,75 @@ class Onboarding extends Component {
                                   }),
                                 }]}>
                                     <X.Button
-                                        style={ Styles.onboardingPedalTouchGateButton }
-                                        onPress={ () => { this.handleControlsVisualPressed('monitoring') } } />
+                                        style={ Styles.onboardingTouchGateButton }
+                                        onPress={ () => { this.handleEngageVisualPressed('monitoring') } } />
                                 </Animated.View>
                             </React.Fragment>
                         ) : null }
-                        { stepPoint == 3 ? (
+                    </View>
+                ) : null }
+
+                { step === 'OB_LANECHANGE' ? (
+                    <View style={ Styles.onboardingVisuals }>
+                        <Animated.Image
+                            source={ require('../../../img/photo_turn_signal_02.jpg') }
+                            style={ [Styles.onboardingPhotoSignal] } />
+                        { stepPoint == 1 ? (
+                            <Animated.View style={ [Styles.onboardingSignalTouchGate, {
+                              opacity: gateHighlighted.interpolate({
+                                  inputRange: [0, 100],
+                                  outputRange: [0, 1],
+                              }),
+                            }]}>
+                                <X.Button
+                                    style={ Styles.onboardingTouchGateButton }
+                                    onPress={ () => { this.handleLaneChangeVisualPressed('start') } } />
+                            </Animated.View>
+                        ) : null }
+                        { stepPoint == 2 ? (
                             <React.Fragment>
                                 <Animated.Image
-                                    source={ require('../../../img/photo_traffic_light_01.jpg') }
+                                    source={ require('../../../img/photo_wheel_hands_01.jpg') }
                                     style={ [Styles.onboardingPhotoCycled, {
                                         opacity: photoCycled.interpolate({
                                             inputRange: [0, 100],
                                             outputRange: [0, 1],
                                         }),
-                                    }] } />
-                                <Animated.View style={ [Styles.onboardingLightTouchGate, {
+                                    }] }>
+                                </Animated.Image>
+                                <Animated.View style={ [Styles.onboardingWheelTouchGate, {
                                   opacity: gateHighlighted.interpolate({
                                       inputRange: [0, 100],
                                       outputRange: [0, 1],
                                   }),
                                 }]}>
                                     <X.Button
-                                        style={ Styles.onboardingPedalTouchGateButton }
-                                        onPress={ () => { this.handleControlsVisualPressed('limitations') } } />
+                                        style={ Styles.onboardingTouchGateButton }
+                                        onPress={ () => { this.handleLaneChangeVisualPressed('perform') } } />
                                 </Animated.View>
                             </React.Fragment>
                         ) : null }
-                        { stepPoint == 4 ? (
+                    </View>
+                ) : null }
+
+                { step === 'OB_DISENGAGE' ? (
+                    <View style={ Styles.onboardingVisuals }>
+                        <Animated.Image
+                            source={ require('../../../img/photo_traffic_light_01.jpg') }
+                            style={ [Styles.onboardingPhotoCruise] } />
+                        { stepPoint == 1 ? (
+                            <Animated.View style={ [Styles.onboardingLightTouchGate, {
+                                opacity: gateHighlighted.interpolate({
+                                    inputRange: [0, 100],
+                                    outputRange: [0, 1],
+                                }),
+                            }]}>
+                                <X.Button
+                                    style={ Styles.onboardingTouchGateButton }
+                                    onPress={ () => { this.handleDisengageVisualPressed('limitations') } } />
+                            </Animated.View>
+                        ) : null }
+                        { stepPoint == 2 ? (
                             <View style={ Styles.onboardingVisuals }>
                                 <Animated.Image
                                     source={ require('../../../img/photo_pedals_01.jpg') }
@@ -991,8 +1296,8 @@ class Onboarding extends Component {
                                   }),
                                 }]}>
                                     <X.Button
-                                        style={ Styles.onboardingPedalTouchGateButton }
-                                        onPress={ () => { this.handleControlsVisualPressed('pedal') } } />
+                                        style={ Styles.onboardingTouchGateButton }
+                                        onPress={ () => { this.handleDisengageVisualPressed('disengage') } } />
                                 </Animated.View>
                                 <Animated.View style={ [Styles.onboardingGasPedalTouchGate, {
                                   opacity: gateHighlighted.interpolate({
@@ -1001,8 +1306,8 @@ class Onboarding extends Component {
                                   }),
                                 }] }>
                                     <X.Button
-                                        style={ Styles.onboardingPedalTouchGateButton }
-                                        onPress={ () => { this.handleControlsVisualPressed('pedal') } } />
+                                        style={ Styles.onboardingTouchGateButton }
+                                        onPress={ () => { this.handleDisengageVisualPressed('disengage') } } />
                                 </Animated.View>
                             </View>
                         ) : null }

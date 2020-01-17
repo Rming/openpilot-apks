@@ -324,7 +324,7 @@ class Settings extends Component {
                             type='custom'
                             title='速限补偿'
                             iconSource={ Icons.speedLimit }
-                            description='当 EON 从地图读到路段速限时，您可以利用速限补偿来微调定速 (单位是 km/h 或 mph)'
+                            description='当设备从地图读到路段速限时，您可以利用速限补偿来微调定速 (单位是 km/h 或 mph)'
                             isExpanded={ expandedCell == 'speedLimitOffset' }
                             handleExpanded={ () => this.handleExpanded('speedLimitOffset') }
                             handleChanged={ this.props.setLimitSetSpeed }>
@@ -463,7 +463,7 @@ class Settings extends Component {
                             type='custom'
                             title='摄像头校准'
                             iconSource={ Icons.calibration }
-                            description='摄像头是一直在后台自动校准的，只有当您的 EON 提示校准无效或者您将 EON 安装至不同的车辆/位置时，才需要重新校准。'
+                            description='摄像头是一直在后台自动校准的，只有当您的设备提示校准无效或者您将设备安装至不同的车辆/位置时，才需要重新校准。'
                             isExpanded={ expandedCell == 'calibration' }
                             handleExpanded={ () => this.handleExpanded('calibration') }>
                             <X.Button
@@ -558,7 +558,7 @@ class Settings extends Component {
                 GitBranch: gitBranch,
                 GitCommit: gitRevision,
                 Passive: isPassive,
-                PandaFirmware: pandaFirmware,
+                PandaFirmwareHex: pandaFirmwareHex,
                 PandaDongleId: pandaDongleId,
                 CommunityFeaturesToggle: communityFeatures,
             },
@@ -600,7 +600,7 @@ class Settings extends Component {
                             title='启用 SSH'
                             value={ isSshEnabled }
                             iconSource={ Icons.developer }
-                            description='允许别的设备通过 Secure Shell (SSH) 连接至您的 EON。'
+                            description='允许别的设备通过 Secure Shell (SSH) 连接至您的设备。'
                             isExpanded={ expandedCell == 'ssh' }
                             handleExpanded={ () => this.handleExpanded('ssh') }
                             handleChanged={ this.props.setSshEnabled } />
@@ -633,7 +633,7 @@ class Settings extends Component {
                             valueTextSize='tiny' />
                         <X.TableCell
                             title='Panda 固件'
-                            value={ pandaFirmware != null ? pandaFirmware : 'N/A' }
+                            value={ pandaFirmwareHex != null ? pandaFirmwareHex : 'N/A' }
                             valueTextSize='tiny' />
                         <X.TableCell
                             title='Panda Dongle ID'
