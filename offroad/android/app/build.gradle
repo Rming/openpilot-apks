@@ -111,6 +111,7 @@ android {
     defaultConfig {
         applicationId "ai.comma.plus.offroad"
         minSdkVersion 23
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 23
 
         versionCode 6
