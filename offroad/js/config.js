@@ -33,4 +33,7 @@ export const Params = {
     KEY_OFFROAD_IS_TAKING_SNAPSHOT: 'Offroad_IsTakingSnapshot',
     KEY_COMMUNITY_FEATURES: 'CommunityFeaturesToggle',
     KEY_LANE_DEPARTURE_WARNING_ENABLED: 'IsLdwEnabled',
+
+    KEY_UI_VOLUME_MULTIPLE: 'AfaUiVolumeMultiple',
+    KEY_CAMERA_OFFSET: 'AfaCameraOffset',
 };

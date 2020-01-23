@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
+import NumericInput from 'react-native-numeric-input'
 
 import ChffrPlus from '../../native/ChffrPlus';
 import UploadProgressTimer from '../../timers/UploadProgressTimer';
@@ -15,6 +16,7 @@ import { formatSize } from '../../utils/bytes';
 import { mpsToKph, mpsToMph, kphToMps, mphToMps } from '../../utils/conversions';
 import { Params } from '../../config';
 import { resetToLaunch } from '../../store/nav/actions';
+
 
 import {
     updateSshEnabled,
@@ -49,6 +51,8 @@ const Icons = {
     minus: require('../../img/icon_minus.png'),
     mapSpeed: require('../../img/icon_map.png'),
     openpilot: require('../../img/icon_openpilot.png'),
+    road: require('../../img/icon_road.png'),
+    volume: require('../../img/icon_volume.png'),
 }
 
 class Settings extends Component {
@@ -259,6 +263,9 @@ class Settings extends Component {
                 OpenpilotEnabledToggle: openpilotEnabled,
                 Passive: isPassive,
                 IsLdwEnabled: isLaneDepartureWarningEnabled,
+
+                AfaUiVolumeMultiple: uiVolumeMultiple,
+                AfaCameraOffset: cameraOffset,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -317,6 +324,58 @@ class Settings extends Component {
                             isExpanded={ expandedCell == 'metric' }
                             handleExpanded={ () => this.handleExpanded('metric') }
                             handleChanged={ this.props.setMetric } />
+                        <X.TableCell
+                            type='custom'
+                            title='媒体音量'
+                            iconSource={ Icons.volume }
+                            description='对 EON 的提示音量大小进行调整，设置为 0 时为静音模式，音量值最大为 100，修改后立即生效。'
+                            isExpanded={ expandedCell == 'ui_volume_multiple' }
+                            handleExpanded={ () => this.handleExpanded('ui_volume_multiple') }>
+                            <NumericInput 
+                                value={ parseInt(uiVolumeMultiple) } 
+                                onChange={multiple => this.props.setUiVolumeMultiple(multiple)} 
+                                totalWidth={120} 
+                                totalHeight={40} 
+                                iconSize={25}
+                                minValue={0}
+                                maxValue={100}
+                                step={20}
+                                valueType='integer'
+                                rounded 
+                                borderColor="transparent"
+                                textColor='#96b4c8'
+                                iconStyle={{ color: '#FFFFFF'}} 
+                                reachMaxIncIconStyle={{color: '#777777'}}
+                                reachMinDecIconStyle={{color: '#777777'}}
+                                rightButtonBackgroundColor='transparent' 
+                                leftButtonBackgroundColor='transparent'/>
+                        </X.TableCell>
+
+                        <X.TableCell
+                            type='custom'
+                            title='相机偏移'
+                            iconSource={ Icons.road }
+                            description='如果 EON 不是固定在汽车挡风玻璃正中间，那么需要调整这个相机偏移量（默认 6 cm），如果相机在汽车左侧、或者行驶过程中车辆偏向右侧车道线，则增加偏移，否则需要减少偏移，重启后生效。'
+                            isExpanded={ expandedCell == 'camera_offset' }
+                            handleExpanded={ () => this.handleExpanded('camera_offset') }>
+                            <NumericInput 
+                                value={ parseInt(cameraOffset) } 
+                                onChange={offset => this.props.setCameraOffset(offset)} 
+                                totalWidth={120} 
+                                totalHeight={40} 
+                                iconSize={25}
+                                step={1}
+                                valueType='integer'
+                                rounded 
+                                borderColor="transparent"
+                                textColor='#96b4c8'
+                                iconStyle={{ color: '#FFFFFF' }}
+                                reachMaxIncIconStyle={{color: '#777777'}}
+                                reachMinDecIconStyle={{color: '#777777'}}
+                                rightButtonBackgroundColor='transparent' 
+                                leftButtonBackgroundColor='transparent'/>
+                        </X.TableCell>
+
                       </X.Table>
                       {/*
                       <X.Table color='darkBlue'>
@@ -864,6 +923,12 @@ const mapDispatchToProps = dispatch => ({
     },
     setLaneDepartureWarningEnabled: (isLaneDepartureWarningEnabled) => {
         dispatch(updateParam(Params.KEY_LANE_DEPARTURE_WARNING_ENABLED, (isLaneDepartureWarningEnabled | 0).toString()));
+    },
+    setUiVolumeMultiple: (multiple) => {
+        dispatch(updateParam(Params.KEY_UI_VOLUME_MULTIPLE, (multiple).toString()));
+    },
+    setCameraOffset: (offset) => {
+        dispatch(updateParam(Params.KEY_CAMERA_OFFSET, (offset).toString()));
     },
     deleteParam: (param) => {
         dispatch(deleteParam(param));

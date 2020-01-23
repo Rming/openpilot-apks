@@ -40,6 +40,9 @@ const PARAMS = [
   "PandaDongleId",
   "CommunityFeaturesToggle",
   "IsLdwEnabled",
+
+  "AfaUiVolumeMultiple",
+  "AfaCameraOffset",
 ].concat(ALERT_PARAMS);
 
 export function refreshParams(params) {
