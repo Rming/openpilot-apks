@@ -66,7 +66,10 @@ class Home extends Component {
     _handleConnectionChange = (isConnected) => {
         console.log('Connection status is ' + (isConnected ? 'online' : 'offline') + ' ' + isConnected);
         this.props.updateConnectionState(isConnected);
-    };
+        if (isConnected) {
+          this.props.fetchDeviceStats();
+        }
+    }
 
     refreshOffroadParams = async () => {
         await this.props.refreshAlertParams();
@@ -475,7 +478,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  14 天行车记录
+                                                  一年的行车记录
                                               </X.Text>
                                           </View>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>

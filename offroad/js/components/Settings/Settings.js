@@ -320,7 +320,7 @@ class Settings extends Component {
                             title='使用公制单位'
                             value={ !!parseInt(isMetric) }
                             iconSource={ Icons.metric }
-                            description='启用后，显示 km/h (速度) 或 °C (温度)，否则显示 mph (速度) 或 °F (温度)。'
+                            description='启用后，速度会显示 km/h，否则显示 mph。'
                             isExpanded={ expandedCell == 'metric' }
                             handleExpanded={ () => this.handleExpanded('metric') }
                             handleChanged={ this.props.setMetric } />
@@ -331,23 +331,23 @@ class Settings extends Component {
                             description='对 EON 的提示音量大小进行调整，设置为 0 时为静音模式，音量值最大为 100，修改后立即生效。'
                             isExpanded={ expandedCell == 'ui_volume_multiple' }
                             handleExpanded={ () => this.handleExpanded('ui_volume_multiple') }>
-                            <NumericInput 
-                                value={ parseInt(uiVolumeMultiple) } 
-                                onChange={multiple => this.props.setUiVolumeMultiple(multiple)} 
-                                totalWidth={120} 
-                                totalHeight={40} 
+                            <NumericInput
+                                value={ parseInt(uiVolumeMultiple) }
+                                onChange={multiple => this.props.setUiVolumeMultiple(multiple)}
+                                totalWidth={120}
+                                totalHeight={40}
                                 iconSize={25}
                                 minValue={0}
                                 maxValue={100}
                                 step={20}
                                 valueType='integer'
-                                rounded 
+                                rounded
                                 borderColor="transparent"
                                 textColor='#96b4c8'
-                                iconStyle={{ color: '#FFFFFF'}} 
+                                iconStyle={{ color: '#FFFFFF'}}
                                 reachMaxIncIconStyle={{color: '#777777'}}
                                 reachMinDecIconStyle={{color: '#777777'}}
-                                rightButtonBackgroundColor='transparent' 
+                                rightButtonBackgroundColor='transparent'
                                 leftButtonBackgroundColor='transparent'/>
                         </X.TableCell>
 
@@ -358,21 +358,21 @@ class Settings extends Component {
                             description='如果 EON 不是固定在汽车挡风玻璃正中间，那么需要调整这个相机偏移量（默认 6 cm），如果相机在汽车左侧、或者行驶过程中车辆偏向右侧车道线，则增加偏移，否则需要减少偏移，重启后生效。'
                             isExpanded={ expandedCell == 'camera_offset' }
                             handleExpanded={ () => this.handleExpanded('camera_offset') }>
-                            <NumericInput 
-                                value={ parseInt(cameraOffset) } 
-                                onChange={offset => this.props.setCameraOffset(offset)} 
-                                totalWidth={120} 
-                                totalHeight={40} 
+                            <NumericInput
+                                value={ parseInt(cameraOffset) }
+                                onChange={offset => this.props.setCameraOffset(offset)}
+                                totalWidth={120}
+                                totalHeight={40}
                                 iconSize={25}
                                 step={1}
                                 valueType='integer'
-                                rounded 
+                                rounded
                                 borderColor="transparent"
                                 textColor='#96b4c8'
                                 iconStyle={{ color: '#FFFFFF' }}
                                 reachMaxIncIconStyle={{color: '#777777'}}
                                 reachMinDecIconStyle={{color: '#777777'}}
-                                rightButtonBackgroundColor='transparent' 
+                                rightButtonBackgroundColor='transparent'
                                 leftButtonBackgroundColor='transparent'/>
                         </X.TableCell>
 
@@ -721,10 +721,10 @@ class Settings extends Component {
             <View>
                 <X.Text color='white' size='tiny'>
                     警告：{'\n'}这个功能会同步 Github 设置里所有公钥的 SSH 访问权限，请不要输入别人的 Github 用户名（即使声称是 comma 的员工），操作完成后，原先内置的 SSH 密钥会被禁用。
-                    
-                    
-                    
-                    
+
+
+
+
                 </X.Text>
                 <View style={ Styles.githubUsernameInputContainer }>
                     <X.Text
