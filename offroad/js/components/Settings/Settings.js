@@ -294,10 +294,10 @@ class Settings extends Component {
                         { !parseInt(isPassive) ? (
                             <X.TableCell
                                 type='switch'
-                                title='Enable Lane Change Assist'
+                                title='启用自动变道辅助'
                                 value={ !!parseInt(laneChangeEnabled) }
                                 iconSource={ Icons.openpilot }
-                                description='Perform assisted lane changes with openpilot by checking your surroundings for safety, activating the turn signal and gently nudging the steering wheel towards your desired lane. openpilot is not capable of checking if a lane change is safe. You must continuously observe your surroundings to use this feature.'
+                                description='如果想切换车道，注意周边车道安全的情况下，打开转向灯，并轻轻的把方向盘推向目标车道。openpilot 无法确认周边车道是否安全，需要你自己观察确认。'
                                 isExpanded={ expandedCell == 'lanechange_enabled' }
                                 handleExpanded={ () => this.handleExpanded('lanechange_enabled') }
                                 handleChanged={ this.props.setLaneChangeEnabled } />
