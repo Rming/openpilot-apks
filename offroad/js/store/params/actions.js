@@ -40,6 +40,7 @@ const PARAMS = [
   "PandaDongleId",
   "CommunityFeaturesToggle",
   "IsLdwEnabled",
+  "LaneChangeEnabled",
 
   "AfaUiVolumeMultiple",
   "AfaCameraOffset",

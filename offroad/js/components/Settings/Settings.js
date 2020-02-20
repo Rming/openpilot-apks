@@ -263,6 +263,7 @@ class Settings extends Component {
                 OpenpilotEnabledToggle: openpilotEnabled,
                 Passive: isPassive,
                 IsLdwEnabled: isLaneDepartureWarningEnabled,
+                LaneChangeEnabled: laneChangeEnabled,
 
                 AfaUiVolumeMultiple: uiVolumeMultiple,
                 AfaCameraOffset: cameraOffset,
@@ -296,6 +297,17 @@ class Settings extends Component {
                                 isExpanded={ expandedCell == 'openpilot_enabled' }
                                 handleExpanded={ () => this.handleExpanded('openpilot_enabled') }
                                 handleChanged={ this.props.setOpenpilotEnabled } />
+                        ) : null }
+                        { !parseInt(isPassive) ? (
+                            <X.TableCell
+                                type='switch'
+                                title='启用自动变道辅助'
+                                value={ !!parseInt(laneChangeEnabled) }
+                                iconSource={ Icons.openpilot }
+                                description='如果想切换车道，注意周边车道安全的情况下，打开转向灯，并轻轻的把方向盘推向目标车道。openpilot 无法确认周边车道是否安全，需要你自己观察确认。'
+                                isExpanded={ expandedCell == 'lanechange_enabled' }
+                                handleExpanded={ () => this.handleExpanded('lanechange_enabled') }
+                                handleChanged={ this.props.setLaneChangeEnabled } />
                         ) : null }
                         <X.TableCell
                             type='switch'
@@ -929,6 +941,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setCameraOffset: (offset) => {
         dispatch(updateParam(Params.KEY_CAMERA_OFFSET, (offset).toString()));
+    },
+    setLaneChangeEnabled: (laneChangeEnabled) => {
+        dispatch(updateParam(Params.KEY_LANE_CHANGE_ENABLED, (laneChangeEnabled | 0).toString()));
     },
     deleteParam: (param) => {
         dispatch(deleteParam(param));
