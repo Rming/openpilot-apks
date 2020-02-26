@@ -36,5 +36,6 @@ export const Params = {
     KEY_LANE_CHANGE_ENABLED: 'LaneChangeEnabled',
 
     KEY_UI_VOLUME_MULTIPLE: 'AfaUiVolumeMultiple',
+    KEY_UI_BRIGHTNESS_MULTIPLE: 'AfaUiBrightnessMultiple',
     KEY_CAMERA_OFFSET: 'AfaCameraOffset',
 };

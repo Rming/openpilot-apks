@@ -53,6 +53,7 @@ const Icons = {
     openpilot: require('../../img/icon_openpilot.png'),
     road: require('../../img/icon_road.png'),
     volume: require('../../img/icon_volume.png'),
+    brightness: require('../../img/icon_brightness.png'),
 }
 
 class Settings extends Component {
@@ -266,6 +267,7 @@ class Settings extends Component {
                 LaneChangeEnabled: laneChangeEnabled,
 
                 AfaUiVolumeMultiple: uiVolumeMultiple,
+                AfaUiBrightnessMultiple: uiBrightnessMultiple,
                 AfaCameraOffset: cameraOffset,
             }
         } = this.props;
@@ -323,7 +325,7 @@ class Settings extends Component {
                             title='上传驾驶员的驾驶录像'
                             value={ !!parseInt(recordFront) }
                             iconSource={ Icons.network }
-                            description='上传前置摄像头的录像来协助我们提升驾驶员检测的准确率。'
+                            description='上传前置摄像头的录像来协助我们提升驾驶员监控的准确率。'
                             isExpanded={ expandedCell == 'record_front' }
                             handleExpanded={ () => this.handleExpanded('record_front') }
                             handleChanged={ this.props.setRecordFront } />
@@ -340,7 +342,7 @@ class Settings extends Component {
                             type='custom'
                             title='媒体音量'
                             iconSource={ Icons.volume }
-                            description='对 EON 的提示音量大小进行调整，设置为 0 时为静音模式，音量值最大为 100，修改后立即生效。'
+                            description='对设备的提示音量大小进行调整，设置为 0 时为静音模式，音量值最大为 100，修改后立即生效。'
                             isExpanded={ expandedCell == 'ui_volume_multiple' }
                             handleExpanded={ () => this.handleExpanded('ui_volume_multiple') }>
                             <NumericInput
@@ -352,6 +354,33 @@ class Settings extends Component {
                                 minValue={0}
                                 maxValue={100}
                                 step={20}
+                                valueType='integer'
+                                rounded
+                                borderColor="transparent"
+                                textColor='#96b4c8'
+                                iconStyle={{ color: '#FFFFFF'}}
+                                reachMaxIncIconStyle={{color: '#777777'}}
+                                reachMinDecIconStyle={{color: '#777777'}}
+                                rightButtonBackgroundColor='transparent'
+                                leftButtonBackgroundColor='transparent'/>
+                        </X.TableCell>
+
+                        <X.TableCell
+                            type='custom'
+                            title='屏幕亮度'
+                            iconSource={ Icons.brightness }
+                            description='对设备的屏幕亮度进行调整，默认值为 100，设置值可以超过 100，设置为 0 时不会息屏，修改后立即生效。'
+                            isExpanded={ expandedCell == 'ui_brightness_multiple' }
+                            handleExpanded={ () => this.handleExpanded('ui_brightness_multiple') }>
+                            <NumericInput
+                                value={ parseInt(uiBrightnessMultiple) }
+                                onChange={multiple => this.props.setUiBrightnessMultiple(multiple)}
+                                totalWidth={120}
+                                totalHeight={40}
+                                iconSize={25}
+                                minValue={0}
+                                maxValue={1000}
+                                step={10}
                                 valueType='integer'
                                 rounded
                                 borderColor="transparent"
@@ -938,6 +967,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setUiVolumeMultiple: (multiple) => {
         dispatch(updateParam(Params.KEY_UI_VOLUME_MULTIPLE, (multiple).toString()));
+    },
+    setUiBrightnessMultiple: (multiple) => {
+        dispatch(updateParam(Params.KEY_UI_BRIGHTNESS_MULTIPLE, (multiple).toString()));
     },
     setCameraOffset: (offset) => {
         dispatch(updateParam(Params.KEY_CAMERA_OFFSET, (offset).toString()));

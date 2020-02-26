@@ -43,6 +43,7 @@ const PARAMS = [
   "LaneChangeEnabled",
 
   "AfaUiVolumeMultiple",
+  "AfaUiBrightnessMultiple",
   "AfaCameraOffset",
 ].concat(ALERT_PARAMS);
 
