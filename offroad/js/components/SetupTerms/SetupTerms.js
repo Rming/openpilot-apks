@@ -37,7 +37,7 @@ class SetupTerms extends Component {
                     <ScrollThrough
                         onPrimaryButtonClick={ onAccept }
                         primaryButtonText='我同意这些条款'
-                        primaryButtonTextDisabled='续续阅读'
+                        primaryButtonTextDisabled='继续阅读'
                         secondaryButtonText='不同意'
                         scrollViewStyles={ Styles.setupTermsScrollView }>
                         <X.Text weight='semibold' color='white'>Comma.ai, Inc. 条款及细则</X.Text>
