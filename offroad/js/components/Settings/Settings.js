@@ -20,6 +20,7 @@ import { resetToLaunch } from '../../store/nav/actions';
 
 import {
     updateSshEnabled,
+    updateSidebarCollapsed,
 } from '../../store/host/actions';
 import {
     deleteParam,
@@ -98,7 +99,9 @@ class Settings extends Component {
         }
     }
 
-    componentWillUnmount() {
+    async componentWillUnmount() {
+        await this.props.handleSidebarExpanded();
+        await ChffrPlus.emitSidebarExpanded();
         UploadProgressTimer.stop();
     }
 
@@ -111,6 +114,7 @@ class Settings extends Component {
 
     handlePressedBack() {
         const { route } = this.state;
+        this.props.handleSidebarExpanded();
         if (route == SettingsRoutes.PRIMARY) {
             ChffrPlus.sendBroadcast("ai.comma.plus.offroad.NAVIGATED_FROM_SETTINGS");
             this.props.navigateHome();
@@ -641,7 +645,7 @@ class Settings extends Component {
                         <X.Button
                             size='small'
                             color='settingsDefault'
-                            onPress={ () => ChffrPlus.openTetheringSettings() }>
+                            onPress={ this.props.openTetheringSettings }>
                             共享网络设置
                         </X.Button>
                     </X.Table>
@@ -894,13 +898,22 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     dispatch,
     navigateHome: async () => {
-        dispatch(resetToLaunch());
+        await dispatch(updateSidebarCollapsed(false));
+        await dispatch(resetToLaunch());
+        await ChffrPlus.emitHomePress();
     },
     openPairing: () => {
         dispatch(NavigationActions.navigate({ routeName: 'SetupQr' }));
     },
-    openWifiSettings: () => {
-        dispatch(NavigationActions.navigate({ routeName: 'SettingsWifi' }));
+    openWifiSettings: async () => {
+        await dispatch(updateSidebarCollapsed(true));
+        await dispatch(NavigationActions.navigate({ routeName: 'SettingsWifi' }));
+        ChffrPlus.emitSidebarCollapsed();
+    },
+    openTetheringSettings: async () => {
+        await dispatch(updateSidebarCollapsed(true));
+        ChffrPlus.emitSidebarCollapsed();
+        ChffrPlus.openTetheringSettings();
     },
     reboot: () => {
         Alert.alert('重新启动', '您确定要重新启动吗?', [
@@ -982,6 +995,14 @@ const mapDispatchToProps = dispatch => ({
     },
     refreshParams: () => {
         dispatch(refreshParams());
+    },
+    handleSidebarCollapsed: async () => {
+        await dispatch(updateSidebarCollapsed(true));
+        ChffrPlus.emitSidebarCollapsed();
+    },
+    handleSidebarExpanded: async () => {
+        await dispatch(updateSidebarCollapsed(false));
+        ChffrPlus.emitSidebarExpanded();
     },
 });
 
