@@ -352,6 +352,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(uiVolumeMultiple) }
                                 onChange={multiple => this.props.setUiVolumeMultiple(multiple)}
+                                onFocus={() => this.props.handleSidebarCollapsed()}
+                                onBlur={() => this.props.handleSidebarExpanded()}
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -379,6 +381,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(uiBrightnessMultiple) }
                                 onChange={multiple => this.props.setUiBrightnessMultiple(multiple)}
+                                onFocus={() => this.props.handleSidebarCollapsed()}
+                                onBlur={() => this.props.handleSidebarExpanded()}
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -406,6 +410,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(cameraOffset) }
                                 onChange={offset => this.props.setCameraOffset(offset)}
+                                onFocus={() => this.props.handleSidebarCollapsed()}
+                                onBlur={() => this.props.handleSidebarExpanded()}
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
