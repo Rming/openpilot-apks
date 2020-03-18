@@ -47,6 +47,7 @@
     "redux": "^3.7.2",
     "redux-persist": "^5.2.2",
     "redux-persist-filesystem-storage": "^1.1.1",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "teaset": "^0.7.1"
   }
 }

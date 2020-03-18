@@ -45,6 +45,7 @@ const PARAMS = [
   "AfaUiVolumeMultiple",
   "AfaUiBrightnessMultiple",
   "AfaCameraOffset",
+  "AfaCarModel",
 ].concat(ALERT_PARAMS);
 
 export function refreshParams(params) {

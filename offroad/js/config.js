@@ -38,4 +38,5 @@ export const Params = {
     KEY_UI_VOLUME_MULTIPLE: 'AfaUiVolumeMultiple',
     KEY_UI_BRIGHTNESS_MULTIPLE: 'AfaUiBrightnessMultiple',
     KEY_CAMERA_OFFSET: 'AfaCameraOffset',
+    KEY_CAR_MODEL: 'AfaCarModel',
 };

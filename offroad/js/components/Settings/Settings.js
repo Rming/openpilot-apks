@@ -8,7 +8,14 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
-import NumericInput from 'react-native-numeric-input'
+import NumericInput from 'react-native-numeric-input';
+import Select from 'teaset/components/Select/Select';
+import Theme from 'teaset/themes/Theme';
+Theme.set({
+    screenColor: 'rgba(0, 0, 0, 0)',
+    selectBorderColor: 'rgba(0, 0, 0, 0)',
+    selectBorderWidth: 0
+})
 
 import ChffrPlus from '../../native/ChffrPlus';
 import UploadProgressTimer from '../../timers/UploadProgressTimer';
@@ -56,6 +63,23 @@ const Icons = {
     volume: require('../../img/icon_volume.png'),
     brightness: require('../../img/icon_brightness.png'),
 }
+
+
+const CarModelOptions = [
+    { value: '', label: '车辆指纹识别'},
+    { value: 'HONDA ACCORD 2018 LX 1.5T', label: '本田雅阁'},
+    { value: 'HONDA ACCORD 2018 HYBRID TOURING', label: '本田雅阁混动'},
+    { value: 'HONDA CIVIC 2016 TOURING', label: '本田思域'},
+    { value: 'HONDA CR-V 2017 EX', label: '本田 CRV'},
+    { value: 'HONDA CR-V 2019 HYBRID', label: '本田 CRV 混动'},
+    { value: 'TOYOTA HIGHLANDER 2017', label: '丰田汉兰达'},
+    { value: 'TOYOTA HIGHLANDER 2020', label: '丰田汉兰达(TSS2)'},
+    { value: 'TOYOTA COROLLA TSS2 2019', label: '丰田卡罗拉(TSS2)'},
+    { value: 'TOYOTA COROLLA HYBRID TSS2 2019', label: '丰田卡罗拉混动(TSS2)'},
+    { value: 'TOYOTA RAV4 2019', label: '丰田 RAV4(TSS2)'},
+    { value: 'TOYOTA RAV4 HYBRID 2019', label: '丰田 RAV4 混动(TSS2)'},
+];
+
 
 class Settings extends Component {
     static navigationOptions = {
@@ -273,6 +297,7 @@ class Settings extends Component {
                 AfaUiVolumeMultiple: uiVolumeMultiple,
                 AfaUiBrightnessMultiple: uiBrightnessMultiple,
                 AfaCameraOffset: cameraOffset,
+                AfaCarModel: carModel,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -426,6 +451,29 @@ class Settings extends Component {
                                 rightButtonBackgroundColor='transparent'
                                 leftButtonBackgroundColor='transparent'/>
                         </X.TableCell>
+
+                        <X.TableCell
+                            type='custom'
+                            title='车型选择'
+                            iconSource={ Icons.road }
+                            description='强制设置车型'
+                            isExpanded={ expandedCell == 'car_model' }
+                            handleExpanded={ () => this.handleExpanded('car_model') }>
+                            <Select
+                              style={{width: 120, backgroundColor: '#efefef'}}
+                              iconTintColor='#777777'
+                              valueStyle={{flex: 1, color: '#777777', textAlign: 'center'}}
+                              value={ carModel }
+                              items={ CarModelOptions }
+                              pickerType="popover"
+                              getItemValue={(item, index) => item.value}
+                              getItemText={(item, index) => item.label}
+                              placeholder='选择车型'
+                              onSelected={(item, index) => this.props.setCarModel(item.value)}
+                              />
+                        </X.TableCell>
+
+
 
                       </X.Table>
                       {/*
@@ -992,6 +1040,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setCameraOffset: (offset) => {
         dispatch(updateParam(Params.KEY_CAMERA_OFFSET, (offset).toString()));
+    },
+    setCarModel: (model) => {
+        dispatch(updateParam(Params.KEY_CAR_MODEL, (model).toString()));
     },
     setLaneChangeEnabled: (laneChangeEnabled) => {
         dispatch(updateParam(Params.KEY_LANE_CHANGE_ENABLED, (laneChangeEnabled | 0).toString()));
