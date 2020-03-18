@@ -460,7 +460,7 @@ class Settings extends Component {
                             type='custom'
                             title='低电量关机'
                             iconSource={ Icons.batteryLow }
-                            description='驾驶结束时，监控设备电量低于设置百分比，且没有在充电，则在 60 秒后自动关机。'
+                            description='驾驶结束时，监控设备电量低于设置百分比，且没有在充电，则在 60 秒后自动关机（如果开机后没有连接过 PANDA 则不会自动关机）。'
                             isExpanded={ expandedCell == 'ui_battery_low' }
                             handleExpanded={ () => this.handleExpanded('ui_battery_low') }>
                             <NumericInput
