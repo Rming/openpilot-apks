@@ -63,6 +63,7 @@ const Icons = {
     volume: require('../../img/icon_volume.png'),
     brightness: require('../../img/icon_brightness.png'),
     car: require('../../img/icon_car.png'),
+    batteryLow: require('../../img/icon_battery_low.png'),
 }
 
 
@@ -299,6 +300,7 @@ class Settings extends Component {
                 AfaUiBrightnessMultiple: uiBrightnessMultiple,
                 AfaCameraOffset: cameraOffset,
                 AfaCarModel: carModel,
+                AfaBattPercOff: battPercOff,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -447,6 +449,36 @@ class Settings extends Component {
                                 borderColor="transparent"
                                 textColor='#96b4c8'
                                 iconStyle={{ color: '#FFFFFF' }}
+                                reachMaxIncIconStyle={{color: '#777777'}}
+                                reachMinDecIconStyle={{color: '#777777'}}
+                                rightButtonBackgroundColor='transparent'
+                                leftButtonBackgroundColor='transparent'/>
+                        </X.TableCell>
+
+
+                        <X.TableCell
+                            type='custom'
+                            title='低电量关机'
+                            iconSource={ Icons.batteryLow }
+                            description='驾驶结束时，监控设备电量低于设置百分比，且没有在充电，则在 60 秒后自动关机。'
+                            isExpanded={ expandedCell == 'ui_battery_low' }
+                            handleExpanded={ () => this.handleExpanded('ui_battery_low') }>
+                            <NumericInput
+                                value={ parseInt(battPercOff) }
+                                onChange={perc => this.props.setBattPercOff(perc)}
+                                onFocus={() => this.props.handleSidebarCollapsed()}
+                                onBlur={() => this.props.handleSidebarExpanded()}
+                                totalWidth={120}
+                                totalHeight={40}
+                                iconSize={25}
+                                minValue={0}
+                                maxValue={100}
+                                step={10}
+                                valueType='integer'
+                                rounded
+                                borderColor="transparent"
+                                textColor='#96b4c8'
+                                iconStyle={{ color: '#FFFFFF'}}
                                 reachMaxIncIconStyle={{color: '#777777'}}
                                 reachMinDecIconStyle={{color: '#777777'}}
                                 rightButtonBackgroundColor='transparent'
@@ -1041,6 +1073,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setCameraOffset: (offset) => {
         dispatch(updateParam(Params.KEY_CAMERA_OFFSET, (offset).toString()));
+    },
+    setBattPercOff: (perc) => {
+        dispatch(updateParam(Params.KEY_BATT_PERC_OFF, (perc).toString()));
     },
     setCarModel: (model) => {
         dispatch(updateParam(Params.KEY_CAR_MODEL, (model).toString()));
