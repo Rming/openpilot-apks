@@ -471,7 +471,7 @@ class Settings extends Component {
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
-                                minValue={0}
+                                minValue={10}
                                 maxValue={100}
                                 step={10}
                                 valueType='integer'
