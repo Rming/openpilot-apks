@@ -62,11 +62,12 @@ const Icons = {
     road: require('../../img/icon_road.png'),
     volume: require('../../img/icon_volume.png'),
     brightness: require('../../img/icon_brightness.png'),
+    car: require('../../img/icon_car.png'),
 }
 
 
 const CarModelOptions = [
-    { value: '', label: '车辆指纹识别'},
+    { value: '', label: '[指纹识别]'},
     { value: 'HONDA ACCORD 2018 LX 1.5T', label: '本田雅阁'},
     { value: 'HONDA ACCORD 2018 HYBRID TOURING', label: '本田雅阁混动'},
     { value: 'HONDA CIVIC 2016 TOURING', label: '本田思域'},
@@ -455,8 +456,8 @@ class Settings extends Component {
                         <X.TableCell
                             type='custom'
                             title='车型选择'
-                            iconSource={ Icons.road }
-                            description='强制设置车型'
+                            iconSource={ Icons.car }
+                            description='[实验性功能]强制设置车辆为指定车型，不再通过车辆指纹、VIN 识别，如果想重新启用指纹识别，请选择指纹识别选项。'
                             isExpanded={ expandedCell == 'car_model' }
                             handleExpanded={ () => this.handleExpanded('car_model') }>
                             <Select
