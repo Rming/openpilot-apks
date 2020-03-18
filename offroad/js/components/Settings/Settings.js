@@ -432,7 +432,7 @@ class Settings extends Component {
                             type='custom'
                             title='相机偏移'
                             iconSource={ Icons.road }
-                            description='如果 EON 不是固定在汽车挡风玻璃正中间，那么需要调整这个相机偏移量（默认 6 cm），如果相机在汽车左侧、或者行驶过程中车辆偏向右侧车道线，则增加偏移，否则需要减少偏移，重启后生效。'
+                            description='如果 EON 不是固定在汽车挡风玻璃正中间，那么需要调整这个相机偏移量（默认 6 cm），如果相机在汽车左侧、或者行驶过程中车辆偏向右侧车道线，则增加偏移，否则需要减少偏移，修改配置重启后生效。'
                             isExpanded={ expandedCell == 'camera_offset' }
                             handleExpanded={ () => this.handleExpanded('camera_offset') }>
                             <NumericInput
@@ -460,7 +460,7 @@ class Settings extends Component {
                             type='custom'
                             title='低电量关机'
                             iconSource={ Icons.batteryLow }
-                            description='驾驶结束时，监控设备电量低于设置百分比，且没有在充电，则在 60 秒后自动关机（如果开机后没有连接过 PANDA 则不会自动关机）。'
+                            description='驾驶结束时，监控设备电量低于设置百分比，且没有在充电，则在 60 秒后自动关机，修改配置重启后生效。'
                             isExpanded={ expandedCell == 'ui_battery_low' }
                             handleExpanded={ () => this.handleExpanded('ui_battery_low') }>
                             <NumericInput
