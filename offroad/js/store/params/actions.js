@@ -47,6 +47,7 @@ const PARAMS = [
   "AfaCameraOffset",
   "AfaCarModel",
   "AfaBattPercOff",
+  "AfaNoBatMode"
 ].concat(ALERT_PARAMS);
 
 export function refreshParams(params) {
