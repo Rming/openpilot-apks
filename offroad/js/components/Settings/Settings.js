@@ -64,6 +64,7 @@ const Icons = {
     brightness: require('../../img/icon_brightness.png'),
     car: require('../../img/icon_car.png'),
     batteryLow: require('../../img/icon_battery_low.png'),
+    nobattery: require('../../img/icon_no_batt.png'),
 }
 
 
@@ -301,6 +302,7 @@ class Settings extends Component {
                 AfaCameraOffset: cameraOffset,
                 AfaCarModel: carModel,
                 AfaBattPercOff: battPercOff,
+                AfaNoBatMode: noBatMode,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -370,6 +372,15 @@ class Settings extends Component {
                             isExpanded={ expandedCell == 'metric' }
                             handleExpanded={ () => this.handleExpanded('metric') }
                             handleChanged={ this.props.setMetric } />
+                        <X.TableCell
+                            type='switch'
+                            title='启用无电池模式'
+                            value={ !!parseInt(noBatMode) }
+                            iconSource={ Icons.nobattery }
+                            description='如果你的设备以及移除电池，可以启动此开关应用相关优化，启用后，自动禁用充电控制，禁用电池温度检测。'
+                            isExpanded={ expandedCell == 'no_bat_mode' }
+                            handleExpanded={ () => this.handleExpanded('no_bat_mode') }
+                            handleChanged={ this.props.setNoBatMode } />
                         <X.TableCell
                             type='custom'
                             title='媒体音量'
@@ -1064,6 +1075,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setLaneDepartureWarningEnabled: (isLaneDepartureWarningEnabled) => {
         dispatch(updateParam(Params.KEY_LANE_DEPARTURE_WARNING_ENABLED, (isLaneDepartureWarningEnabled | 0).toString()));
+    },
+    setNoBatMode: (noBatMode) => {
+        dispatch(updateParam(Params.KEY_NO_BAT_MODE, (noBatMode | 0).toString()));
     },
     setUiVolumeMultiple: (multiple) => {
         dispatch(updateParam(Params.KEY_UI_VOLUME_MULTIPLE, (multiple).toString()));

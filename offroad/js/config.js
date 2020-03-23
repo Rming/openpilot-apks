@@ -40,4 +40,5 @@ export const Params = {
     KEY_CAMERA_OFFSET: 'AfaCameraOffset',
     KEY_CAR_MODEL: 'AfaCarModel',
     KEY_BATT_PERC_OFF: 'AfaBattPercOff',
+    KEY_NO_BAT_MODE: 'AfaNoBatMode',
 };
