@@ -377,7 +377,7 @@ class Settings extends Component {
                             title='启用无电池模式'
                             value={ !!parseInt(noBatMode) }
                             iconSource={ Icons.nobattery }
-                            description='如果你的设备以及移除电池，可以启动此开关应用相关优化，启用后，自动禁用充电控制，禁用电池温度检测。'
+                            description='如果你的设备已经移除电池，可以通过此开关启用相关优化，启用后，自动禁用充电控制，禁用电池温度检测，修改后重启生效'
                             isExpanded={ expandedCell == 'no_bat_mode' }
                             handleExpanded={ () => this.handleExpanded('no_bat_mode') }
                             handleChanged={ this.props.setNoBatMode } />
