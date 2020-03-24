@@ -65,6 +65,8 @@ const Icons = {
     car: require('../../img/icon_car.png'),
     batteryLow: require('../../img/icon_battery_low.png'),
     nobattery: require('../../img/icon_no_batt.png'),
+    allowGas: require('../../img/icon_allow_gas.png'),
+
 }
 
 
@@ -303,6 +305,7 @@ class Settings extends Component {
                 AfaCarModel: carModel,
                 AfaBattPercOff: battPercOff,
                 AfaNoBatMode: noBatMode,
+                AfaAllowGas: allowGas,
             }
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
@@ -374,13 +377,22 @@ class Settings extends Component {
                             handleChanged={ this.props.setMetric } />
                         <X.TableCell
                             type='switch'
-                            title='启用无电池模式'
+                            title='无电池模式'
                             value={ !!parseInt(noBatMode) }
                             iconSource={ Icons.nobattery }
                             description='如果你的设备已经移除电池，可以通过此开关启用相关优化，启用后，自动禁用充电控制，禁用电池温度检测，修改后重启生效'
                             isExpanded={ expandedCell == 'no_bat_mode' }
                             handleExpanded={ () => this.handleExpanded('no_bat_mode') }
                             handleChanged={ this.props.setNoBatMode } />
+                        <X.TableCell
+                            type='switch'
+                            title='允许油门'
+                            value={ !!parseInt(allowGas) }
+                            iconSource={ Icons.allowGas }
+                            description='启用此选项后，在使用 openpilot 时允许踩下油门踏板而不退出系统，否则踩下油门踏板即取消控制，修改后重启生效'
+                            isExpanded={ expandedCell == 'allow_gas' }
+                            handleExpanded={ () => this.handleExpanded('allow_gas') }
+                            handleChanged={ this.props.setAllowGas } />
                         <X.TableCell
                             type='custom'
                             title='媒体音量'
@@ -1078,6 +1090,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setNoBatMode: (noBatMode) => {
         dispatch(updateParam(Params.KEY_NO_BAT_MODE, (noBatMode | 0).toString()));
+    },
+    setAllowGas: (allowGas) => {
+        dispatch(updateParam(Params.KEY_ALLOW_GAS, (allowGas | 0).toString()));
     },
     setUiVolumeMultiple: (multiple) => {
         dispatch(updateParam(Params.KEY_UI_VOLUME_MULTIPLE, (multiple).toString()));
