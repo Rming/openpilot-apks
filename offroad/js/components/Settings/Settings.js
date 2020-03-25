@@ -77,6 +77,8 @@ const CarModelOptions = [
     { value: 'HONDA CIVIC 2016 TOURING', label: '本田思域'},
     { value: 'HONDA CR-V 2017 EX', label: '本田 CRV'},
     { value: 'HONDA CR-V 2019 HYBRID', label: '本田 CRV 混动'},
+    { value: 'TOYOTA CAMRY 2018', label: '丰田凯美瑞'},
+    { value: 'TOYOTA CAMRY HYBRID 2018', label: '丰田凯美瑞混动'},
     { value: 'TOYOTA HIGHLANDER 2017', label: '丰田汉兰达'},
     { value: 'TOYOTA HIGHLANDER 2020', label: '丰田汉兰达(TSS2)'},
     { value: 'TOYOTA COROLLA TSS2 2019', label: '丰田卡罗拉(TSS2)'},
