@@ -22,6 +22,7 @@ import android.os.Environment
 import android.os.StatFs
 import android.util.Base64
 import android.util.Log
+import android.text.format.Formatter
 import io.jsonwebtoken.Jwts
 import java.io.File
 import java.io.ByteArrayOutputStream
@@ -430,11 +431,13 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         var isConnected: Boolean
         var state: String?
         var ssid: String?
+        var ip: String?
 
         if (wifiInfo != null && networkInfo != null) {
             isConnected = networkInfo.isConnected
             state = networkInfo.state.toString()
             ssid = wifiInfo.ssid.removePrefix("\"").removeSuffix("\"")
+            ip = Formatter.formatIpAddress(wifiInfo.getIpAddress())
         } else {
             val wifiManager = ctx.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             val connManager = ctx.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -442,6 +445,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             isConnected = (netInfo?.isConnected ?: false) && netInfo?.type == ConnectivityManager.TYPE_WIFI
             state = netInfo?.state.toString()
             ssid = wifiManager.connectionInfo?.ssid?.removePrefix("\"")?.removeSuffix("\"")
+            ip = Formatter.formatIpAddress(wifiManager.connectionInfo.getIpAddress())
         }
 
         if (ssid == "<unknown ssid>") ssid = null
@@ -449,6 +453,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         map.putBoolean("isConnected", isConnected)
         map.putString("state", state)
         map.putString("ssid", ssid)
+        map.putString("ip", ip)
 
         return map
     }

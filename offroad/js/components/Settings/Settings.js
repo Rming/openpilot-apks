@@ -222,8 +222,8 @@ class Settings extends Component {
         } = this.props;
         const software = !!parseInt(isPassive) ? 'chffrplus' : 'openpilot';
         let connectivity = 'Disconnected'
-        if (wifiState.isConnected && wifiState.ssid) {
-            connectivity = wifiState.ssid;
+        if (wifiState.isConnected && wifiState.ip) {
+            connectivity = wifiState.ip;
         } else if (simState.networkType && simState.networkType != 'NO SIM') {
             connectivity = simState.networkType;
         }
