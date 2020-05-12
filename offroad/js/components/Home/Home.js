@@ -111,15 +111,6 @@ class Home extends Component {
         this.props.openPairing();
     }
 
-    checkIsInAmerica = () => {
-        const { latitude, longitude } = this.props;
-        const top = 49.3457868; // north lat
-        const left = -124.7844079; // west long
-        const right = -66.9513812; // east long
-        const bottom =  24.7433195; // south lat
-
-        return ((bottom <= latitude) && (latitude <= top) && (left <= longitude) && (longitude <= right));
-    }
 
     getLocalizedDate(){
         var n = new Date()
@@ -136,7 +127,6 @@ class Home extends Component {
         const {
             hasPrime,
             isPaired,
-            isNavAvailable,
             summaryDate,
             summaryCity,
             params,
@@ -150,7 +140,6 @@ class Home extends Component {
 
         const softwareName = !!parseInt(params.Passive) ? 'dashcam' : 'openpilot';
         const softwareString = `${ softwareName } v${ params.Version }`;
-        const isAmerica = this.checkIsInAmerica();
         const hasDeviceStats = typeof(deviceStats.all) !== 'undefined';
         const isMetric = !!parseInt(params.IsMetric);
 
@@ -408,7 +397,7 @@ class Home extends Component {
                                   </View>
                               </View>
                           </View>
-                          { isPaired && (hasPrime || !isAmerica) ? (
+                          { isPaired && hasPrime ? (
                               <View style={ Styles.homeBodyAccount }>
                                   <View style={ Styles.homeBodyAccountPoints }>
                                       <X.Text
@@ -540,9 +529,8 @@ const mapStateToProps = (state) => {
     return {
         username: state.host.account && state.host.account.username,
         commaPoints: state.host.account && state.host.account.points,
-        hasPrime: state.host.device && state.host.device.sim_id !== null,
+        hasPrime: state.host.device && state.host.device.prime,
         isPaired: state.host.device && state.host.device.is_paired,
-        isNavAvailable: state.host.isNavAvailable,
         latitude: state.environment.latitude,
         longitude: state.environment.longitude,
         summaryCity: state.environment.city,
