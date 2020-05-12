@@ -111,16 +111,6 @@ class Home extends Component {
         this.props.openPairing();
     }
 
-    checkIsInAmerica = () => {
-        const { latitude, longitude } = this.props;
-        const top = 49.3457868; // north lat
-        const left = -124.7844079; // west long
-        const right = -66.9513812; // east long
-        const bottom =  24.7433195; // south lat
-
-        return ((bottom <= latitude) && (latitude <= top) && (left <= longitude) && (longitude <= right));
-    }
-
     getLocalizedDate(){
         var n = new Date()
         var weekdays = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
@@ -136,7 +126,6 @@ class Home extends Component {
         const {
             hasPrime,
             isPaired,
-            isNavAvailable,
             summaryDate,
             summaryCity,
             params,
@@ -150,7 +139,6 @@ class Home extends Component {
 
         const softwareName = !!parseInt(params.Passive) ? 'dashcam' : 'openpilot';
         const softwareString = `${ softwareName } v${ params.Version }`;
-        const isAmerica = this.checkIsInAmerica();
         const hasDeviceStats = typeof(deviceStats.all) !== 'undefined';
         const isMetric = !!parseInt(params.IsMetric);
 
@@ -408,7 +396,7 @@ class Home extends Component {
                                   </View>
                               </View>
                           </View>
-                          { isPaired && (hasPrime || !isAmerica) ? (
+                          { isPaired && hasPrime ? (
                               <View style={ Styles.homeBodyAccount }>
                                   <View style={ Styles.homeBodyAccountPoints }>
                                       <X.Text
@@ -447,14 +435,14 @@ class Home extends Component {
                                           size='medium'
                                           weight='semibold'
                                           style={ Styles.homeBodyAccountUpgradeTitle }>
-                                          立即更新
+                                          立即升级
                                       </X.Text>
                                       <X.Text
                                           color='white'
                                           size='tiny'
                                           weight='light'
                                           style={ Styles.homeBodyAccountUpgradeContext }>
-                                          成为 comma 会员，获取更多功能！
+                                          在 App 中激活会员，获取更多高级功能！
                                       </X.Text>
                                       <View style={ Styles.homeBodyAccountUpgradeFeatures }>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -466,7 +454,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  远程访问
+                                                  支持远程 SSH 访问
                                               </X.Text>
                                           </View>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -478,7 +466,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  一年的行车记录
+                                                  一年的行车录像存储
                                               </X.Text>
                                           </View>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -490,7 +478,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  开发人员 perks
+                                                  更多开发者福利
                                               </X.Text>
                                           </View>
                                       </View>
@@ -540,9 +528,8 @@ const mapStateToProps = (state) => {
     return {
         username: state.host.account && state.host.account.username,
         commaPoints: state.host.account && state.host.account.points,
-        hasPrime: state.host.device && state.host.device.sim_id !== null,
+        hasPrime: state.host.device && state.host.device.prime,
         isPaired: state.host.device && state.host.device.is_paired,
-        isNavAvailable: state.host.isNavAvailable,
         latitude: state.environment.latitude,
         longitude: state.environment.longitude,
         summaryCity: state.environment.city,

@@ -1,6 +1,5 @@
 import {
     ACTION_SIM_STATE_CHANGED,
-    ACTION_NAV_AVAILABILITY_CHANGED,
     ACTION_CONNECTION_STATUS_CHANGED,
     ACTION_THERMAL_DATA_CHANGED,
     ACTION_WIFI_STATE_CHANGED,
@@ -11,13 +10,12 @@ import {
     ACTION_DEVICE_STATS_CHANGED,
     ACTION_UPDATE_IS_AVAILABLE_CHANGED,
     ACTION_LAST_ROUTE_NAME_CHANGED,
-    ACTION_SIDEBAR_TOGGLED,
+    ACTION_IS_OFFROAD_CHANGED,
 } from './actions';
 import SimState from './SimState';
 
 const initialHostState = {
     simState: SimState.UNKNOWN,
-    isNavAvailable: false,
     isConnected: false,
     thermal: {},
     wifiState: {},
@@ -31,7 +29,7 @@ const initialHostState = {
     updateIsAvailable: false,
     updateReleaseNotes: "",
     lastRouteName: "",
-    sidebarCollapsed: false,
+    isOffroad: true,
 };
 
 export default (state = initialHostState, action) => {
@@ -40,11 +38,6 @@ export default (state = initialHostState, action) => {
             return {
                 ...state,
                 simState: action.simState,
-            }
-        case ACTION_NAV_AVAILABILITY_CHANGED:
-            return {
-                ...state,
-                isNavAvailable: action.isNavAvailable,
             }
         case ACTION_CONNECTION_STATUS_CHANGED:
             return {
@@ -98,10 +91,10 @@ export default (state = initialHostState, action) => {
                 ...state,
                 lastRouteName: action.payload.lastRouteName,
             }
-        case ACTION_SIDEBAR_TOGGLED:
+        case ACTION_IS_OFFROAD_CHANGED:
             return {
                 ...state,
-                sidebarCollapsed: action.payload.sidebarCollapsed,
+                isOffroad: action.payload.isOffroad,
             }
         default:
             return state;
