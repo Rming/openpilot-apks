@@ -517,7 +517,7 @@ class Settings extends Component {
                             type='custom'
                             title='车型选择'
                             iconSource={ Icons.car }
-                            description='[实验性功能]强制设置车辆为指定车型，不再通过车辆指纹、VIN 识别，如果想重新启用指纹识别，请选择指纹识别选项。'
+                            description='强制设置车辆为指定车型，不再通过车辆指纹、VIN 识别，如果想重新启用指纹识别，请选择指纹识别选项。'
                             isExpanded={ expandedCell == 'car_model' }
                             handleExpanded={ () => this.handleExpanded('car_model') }>
                             <Select
@@ -698,9 +698,9 @@ class Settings extends Component {
                     <X.Table color='darkBlue'>
                         <X.TableCell
                             type='custom'
-                            title='Driver Camera View'
+                            title='前置摄像头'
                             iconSource={ Icons.monitoring }
-                            description='Preview the driver facing camera to help optimize device mounting position for best driver monitoring experience. (offroad use only)'
+                            description='预览驾驶员监控摄像头画面，方便调整设备安装位置，更好的使用驾驶员监控功能（仅限停车时使用）。'
                             isExpanded={ expandedCell == 'driver_view_enabled' }
                             handleExpanded={ () => this.handleExpanded('driver_view_enabled') } >
                             <X.Button
@@ -709,7 +709,7 @@ class Settings extends Component {
                                 isDisabled={ !isOffroad }
                                 onPress={ this.props.setIsDriverViewEnabled  }
                                 style={ { minWidth: '100%' } }>
-                                Preview
+                                预览
                             </X.Button>
                         </X.TableCell>
                     </X.Table>

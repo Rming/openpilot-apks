@@ -436,14 +436,14 @@ class Home extends Component {
                                           size='medium'
                                           weight='semibold'
                                           style={ Styles.homeBodyAccountUpgradeTitle }>
-                                          立即更新
+                                          立即升级
                                       </X.Text>
                                       <X.Text
                                           color='white'
                                           size='tiny'
                                           weight='light'
                                           style={ Styles.homeBodyAccountUpgradeContext }>
-                                          成为 comma 会员，获取更多功能！
+                                          在 App 中激活会员，获取更多高级功能！
                                       </X.Text>
                                       <View style={ Styles.homeBodyAccountUpgradeFeatures }>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -455,7 +455,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  远程访问
+                                                  支持远程 SSH 访问
                                               </X.Text>
                                           </View>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -467,7 +467,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  一年的行车记录
+                                                  一年的行车录像存储
                                               </X.Text>
                                           </View>
                                           <View style={ Styles.homeBodyAccountUpgradeFeature }>
@@ -479,7 +479,7 @@ class Home extends Component {
                                                   color='white'
                                                   size='tiny'
                                                   weight='semibold'>
-                                                  开发人员 perks
+                                                  更多开发者福利
                                               </X.Text>
                                           </View>
                                       </View>
