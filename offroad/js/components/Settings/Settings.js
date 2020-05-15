@@ -18,6 +18,7 @@ Theme.set({
 })
 
 import ChffrPlus from '../../native/ChffrPlus';
+import Layout from '../../native/Layout';
 import UploadProgressTimer from '../../timers/UploadProgressTimer';
 import { formatSize } from '../../utils/bytes';
 import { mpsToKph, mpsToMph, kphToMps, mphToMps } from '../../utils/conversions';
@@ -27,7 +28,6 @@ import { resetToLaunch } from '../../store/nav/actions';
 
 import {
     updateSshEnabled,
-    updateSidebarCollapsed,
 } from '../../store/host/actions';
 import {
     deleteParam,
@@ -59,6 +59,8 @@ const Icons = {
     minus: require('../../img/icon_minus.png'),
     mapSpeed: require('../../img/icon_map.png'),
     openpilot: require('../../img/icon_openpilot.png'),
+    openpilot_mirrored: require('../../img/icon_openpilot_mirrored.png'),
+    monitoring: require('../../img/icon_monitoring.png'),
     road: require('../../img/icon_road.png'),
     volume: require('../../img/icon_volume.png'),
     brightness: require('../../img/icon_brightness.png'),
@@ -66,7 +68,6 @@ const Icons = {
     batteryLow: require('../../img/icon_battery_low.png'),
     nobattery: require('../../img/icon_no_batt.png'),
     allowGas: require('../../img/icon_allow_gas.png'),
-
 }
 
 
@@ -132,8 +133,7 @@ class Settings extends Component {
     }
 
     async componentWillUnmount() {
-        await this.props.handleSidebarExpanded();
-        await ChffrPlus.emitSidebarExpanded();
+        await Layout.emitSidebarExpanded();
         UploadProgressTimer.stop();
     }
 
@@ -146,10 +146,8 @@ class Settings extends Component {
 
     handlePressedBack() {
         const { route } = this.state;
-        this.props.handleSidebarExpanded();
         if (route == SettingsRoutes.PRIMARY) {
-            ChffrPlus.sendBroadcast("ai.comma.plus.offroad.NAVIGATED_FROM_SETTINGS");
-            this.props.navigateHome();
+            this.props.goBack();
         } else {
             this.handleNavigatedFromMenu(SettingsRoutes.PRIMARY);
         }
@@ -163,11 +161,7 @@ class Settings extends Component {
 
     handlePressedResetCalibration = async () => {
         this.props.deleteParam(Params.KEY_CALIBRATION_PARAMS);
-        this.setState({ calibration: null });
-        Alert.alert('重新启动', '重置摄像头校准需要重新启动。', [
-            { text: '稍后', onPress: () => {}, style: 'cancel' },
-            { text: '马上', onPress: () => ChffrPlus.reboot() },
-        ]);
+        this.props.deleteParam(Params.KEY_LIVE_PARAMETERS);
     }
 
     // handleChangedSpeedLimitOffset(operator) {
@@ -293,6 +287,7 @@ class Settings extends Component {
         const {
             params: {
                 RecordFront: recordFront,
+                IsRHD: isRHD,
                 IsMetric: isMetric,
                 LongitudinalControl: hasLongitudinalControl,
                 LimitSetSpeed: limitSetSpeed,
@@ -301,7 +296,6 @@ class Settings extends Component {
                 Passive: isPassive,
                 IsLdwEnabled: isLaneDepartureWarningEnabled,
                 LaneChangeEnabled: laneChangeEnabled,
-
                 AfaUiVolumeMultiple: uiVolumeMultiple,
                 AfaUiBrightnessMultiple: uiBrightnessMultiple,
                 AfaCameraOffset: cameraOffset,
@@ -309,7 +303,7 @@ class Settings extends Component {
                 AfaBattPercOff: battPercOff,
                 AfaNoBatMode: noBatMode,
                 AfaAllowGas: allowGas,
-            }
+            },
         } = this.props;
         const { expandedCell, speedLimitOffsetInt } = this.state;
         return (
@@ -345,7 +339,7 @@ class Settings extends Component {
                                 type='switch'
                                 title='启用自动变道辅助'
                                 value={ !!parseInt(laneChangeEnabled) }
-                                iconSource={ Icons.openpilot }
+                                iconSource={ Icons.road }
                                 description='如果想切换车道，注意周边车道安全的情况下，打开转向灯，并轻轻的把方向盘推向目标车道。openpilot 无法确认周边车道是否安全，需要你自己观察确认。'
                                 isExpanded={ expandedCell == 'lanechange_enabled' }
                                 handleExpanded={ () => this.handleExpanded('lanechange_enabled') }
@@ -369,6 +363,15 @@ class Settings extends Component {
                             isExpanded={ expandedCell == 'record_front' }
                             handleExpanded={ () => this.handleExpanded('record_front') }
                             handleChanged={ this.props.setRecordFront } />
+                        <X.TableCell
+                            type='switch'
+                            title='启用右舵模式'
+                            value={ !!parseInt(isRHD) }
+                            iconSource={ Icons.openpilot_mirrored }
+                            description='允许 openpilot 遵守靠左行驶的交通惯例，同时对右侧驾驶员进行监控'
+                            isExpanded={ expandedCell == 'is_rhd' }
+                            handleExpanded={ () => this.handleExpanded('is_rhd') }
+                            handleChanged={ this.props.setIsRHD } />
                         <X.TableCell
                             type='switch'
                             title='使用公制单位'
@@ -406,8 +409,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(uiVolumeMultiple) }
                                 onChange={multiple => this.props.setUiVolumeMultiple(multiple)}
-                                onFocus={() => this.props.handleSidebarCollapsed()}
-                                onBlur={() => this.props.handleSidebarExpanded()}
+                                onFocus={ () => Layout.emitSidebarCollapsed() }
+                                onBlur={ () => Layout.emitSidebarExpanded() }
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -435,8 +438,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(uiBrightnessMultiple) }
                                 onChange={multiple => this.props.setUiBrightnessMultiple(multiple)}
-                                onFocus={() => this.props.handleSidebarCollapsed()}
-                                onBlur={() => this.props.handleSidebarExpanded()}
+                                onFocus={ () => Layout.emitSidebarCollapsed() }
+                                onBlur={ () => Layout.emitSidebarExpanded() }
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -464,8 +467,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(cameraOffset) }
                                 onChange={offset => this.props.setCameraOffset(offset)}
-                                onFocus={() => this.props.handleSidebarCollapsed()}
-                                onBlur={() => this.props.handleSidebarExpanded()}
+                                onFocus={ () => Layout.emitSidebarCollapsed() }
+                                onBlur={ () => Layout.emitSidebarExpanded() }
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -492,8 +495,8 @@ class Settings extends Component {
                             <NumericInput
                                 value={ parseInt(battPercOff) }
                                 onChange={perc => this.props.setBattPercOff(perc)}
-                                onFocus={() => this.props.handleSidebarCollapsed()}
-                                onBlur={() => this.props.handleSidebarExpanded()}
+                                onFocus={ () => Layout.emitSidebarCollapsed() }
+                                onBlur={ () => Layout.emitSidebarExpanded() }
                                 totalWidth={120}
                                 totalHeight={40}
                                 iconSize={25}
@@ -515,7 +518,7 @@ class Settings extends Component {
                             type='custom'
                             title='车型选择'
                             iconSource={ Icons.car }
-                            description='[实验性功能]强制设置车辆为指定车型，不再通过车辆指纹、VIN 识别，如果想重新启用指纹识别，请选择指纹识别选项。'
+                            description='强制设置车辆为指定车型，不再通过车辆指纹、VIN 识别，如果想重新启用指纹识别，请选择指纹识别选项。'
                             isExpanded={ expandedCell == 'car_model' }
                             handleExpanded={ () => this.handleExpanded('car_model') }>
                             <Select
@@ -660,6 +663,7 @@ class Settings extends Component {
                 DongleId: dongleId,
                 Passive: isPassive,
             },
+            isOffroad,
         } = this.props;
         const software = !!parseInt(isPassive) ? 'chffrplus' : 'openpilot';
         return (
@@ -689,6 +693,24 @@ class Settings extends Component {
                                 onPress={ this.handlePressedResetCalibration  }
                                 style={ { minWidth: '100%' } }>
                                 重新校准
+                            </X.Button>
+                        </X.TableCell>
+                    </X.Table>
+                    <X.Table color='darkBlue'>
+                        <X.TableCell
+                            type='custom'
+                            title='前置摄像头'
+                            iconSource={ Icons.monitoring }
+                            description='预览驾驶员监控摄像头画面，方便调整设备安装位置，更好的使用驾驶员监控功能（仅限停车时使用）。'
+                            isExpanded={ expandedCell == 'driver_view_enabled' }
+                            handleExpanded={ () => this.handleExpanded('driver_view_enabled') } >
+                            <X.Button
+                                size='tiny'
+                                color='settingsDefault'
+                                isDisabled={ !isOffroad }
+                                onPress={ this.props.setIsDriverViewEnabled  }
+                                style={ { minWidth: '100%' } }>
+                                预览
                             </X.Button>
                         </X.TableCell>
                     </X.Table>
@@ -895,6 +917,8 @@ class Settings extends Component {
                     <TextInput
                         style={ Styles.githubUsernameInput }
                         onChangeText={ (text) => this.setState({ githubUsername: text, authKeysUpdateState: null })}
+                        onFocus={ () => Layout.emitSidebarCollapsed() }
+                        onBlur={ () => Layout.emitSidebarExpanded() }
                         value={ githubUsername }
                         ref={ ref => this.githubInput = ref }
                         underlineColorAndroid='transparent'
@@ -1000,6 +1024,7 @@ const mapStateToProps = state => ({
     simState: state.host.simState,
     wifiState: state.host.wifiState,
     isPaired: state.host.device && state.host.device.is_paired,
+    isOffroad: state.host.isOffroad,
 
     // Uploader
     txSpeedKbps: parseInt(state.uploads.txSpeedKbps),
@@ -1010,22 +1035,19 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     dispatch,
-    navigateHome: async () => {
-        await dispatch(updateSidebarCollapsed(false));
+    goBack: async () => {
         await dispatch(resetToLaunch());
-        await ChffrPlus.emitHomePress();
+        await Layout.goBack();
     },
     openPairing: () => {
         dispatch(NavigationActions.navigate({ routeName: 'SetupQr' }));
     },
     openWifiSettings: async () => {
-        await dispatch(updateSidebarCollapsed(true));
         await dispatch(NavigationActions.navigate({ routeName: 'SettingsWifi' }));
-        ChffrPlus.emitSidebarCollapsed();
+        Layout.emitSidebarCollapsed();
     },
     openTetheringSettings: async () => {
-        await dispatch(updateSidebarCollapsed(true));
-        ChffrPlus.emitSidebarCollapsed();
+        Layout.emitSidebarCollapsed();
         ChffrPlus.openTetheringSettings();
     },
     reboot: () => {
@@ -1063,6 +1085,12 @@ const mapDispatchToProps = dispatch => ({
     },
     setRecordFront: (recordFront) => {
         dispatch(updateParam(Params.KEY_RECORD_FRONT, (recordFront | 0).toString()));
+    },
+    setIsRHD: (isRHD) => {
+        dispatch(updateParam(Params.KEY_IS_RHD, (isRHD | 0).toString()));
+    },
+    setIsDriverViewEnabled: (isDriverViewEnabled) => {
+        dispatch(updateParam(Params.KEY_IS_DRIVER_VIEW_ENABLED, (isDriverViewEnabled | 1).toString()));
     },
     setSshEnabled: (isSshEnabled) => {
         dispatch(updateSshEnabled(!!isSshEnabled));
@@ -1120,14 +1148,6 @@ const mapDispatchToProps = dispatch => ({
     },
     refreshParams: () => {
         dispatch(refreshParams());
-    },
-    handleSidebarCollapsed: async () => {
-        await dispatch(updateSidebarCollapsed(true));
-        ChffrPlus.emitSidebarCollapsed();
-    },
-    handleSidebarExpanded: async () => {
-        await dispatch(updateSidebarCollapsed(false));
-        ChffrPlus.emitSidebarExpanded();
     },
 });
 
