@@ -85,6 +85,7 @@ const CarModelOptions = [
     { value: 'TOYOTA COROLLA HYBRID TSS2 2019', label: '丰田卡罗拉混动(TSS2)'},
     { value: 'TOYOTA RAV4 2019', label: '丰田 RAV4(TSS2)'},
     { value: 'TOYOTA RAV4 HYBRID 2019', label: '丰田 RAV4 混动(TSS2)'},
+    { value: 'TOYOTA SIENNA XLE 2018', label: '丰田塞纳'},
 ];
 
 
