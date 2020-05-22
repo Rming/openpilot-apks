@@ -302,6 +302,7 @@ class Settings extends Component {
                 AfaCarModel: carModel,
                 AfaBattPercOff: battPercOff,
                 AfaNoBatMode: noBatMode,
+                AfaIsDMEnabled: isDMEnabled,
                 AfaAllowGas: allowGas,
             },
         } = this.props;
@@ -354,6 +355,15 @@ class Settings extends Component {
                             isExpanded={ expandedCell == 'ldw' }
                             handleExpanded={ () => this.handleExpanded('ldw') }
                             handleChanged={ this.props.setLaneDepartureWarningEnabled } />
+                        <X.TableCell
+                            type='switch'
+                            title='启用驾驶员监控'
+                            value={ !!parseInt(isDMEnabled) }
+                            iconSource={ Icons.monitoring }
+                            description='启用 openpilot 后，在车辆行驶过程中如果监控到驾驶员注意力不集中，则发出警告，修改后重启生效。'
+                            isExpanded={ expandedCell == 'dm' }
+                            handleExpanded={ () => this.handleExpanded('dm') }
+                            handleChanged={ this.props.setDMEnabled } />
                         <X.TableCell
                             type='switch'
                             title='上传驾驶员的驾驶录像'
@@ -1118,6 +1128,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setLaneDepartureWarningEnabled: (isLaneDepartureWarningEnabled) => {
         dispatch(updateParam(Params.KEY_LANE_DEPARTURE_WARNING_ENABLED, (isLaneDepartureWarningEnabled | 0).toString()));
+    },
+    setDMEnabled: (isDMEnabled) => {
+        dispatch(updateParam(Params.KEY_IS_DM_ENABLED, (isDMEnabled | 0).toString()));
     },
     setNoBatMode: (noBatMode) => {
         dispatch(updateParam(Params.KEY_NO_BAT_MODE, (noBatMode | 0).toString()));

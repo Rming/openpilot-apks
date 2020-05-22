@@ -43,5 +43,6 @@ export const Params = {
     KEY_CAR_MODEL: 'AfaCarModel',
     KEY_BATT_PERC_OFF: 'AfaBattPercOff',
     KEY_NO_BAT_MODE: 'AfaNoBatMode',
+    KEY_IS_DM_ENABLED: 'AfaIsDMEnabled',
     KEY_ALLOW_GAS: 'AfaAllowGas',
 };

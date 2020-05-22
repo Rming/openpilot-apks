@@ -49,6 +49,7 @@ const PARAMS = [
   "AfaCarModel",
   "AfaBattPercOff",
   "AfaNoBatMode",
+  "AfaIsDMEnabled",
   "AfaAllowGas"
 ].concat(ALERT_PARAMS);
 
