@@ -451,6 +451,33 @@ class Settings extends Component {
         )
     }
 
+    calib_description(params){
+      var text = 'openpilot 需要将设备固定在左右偏差 4° 以内，上下偏差 5° 以内。摄像头在后台持续自动校准，很少有需要重置的情况。';
+      if ((params == null) || (params == undefined)) {
+        var calib_json = null
+      } else {
+        var calib_json = JSON.parse(params);
+      }
+      if ((calib_json != null) && (calib_json.hasOwnProperty('calib_radians'))) {
+        var calibArr = (calib_json.calib_radians).toString().split(',');
+        var pi = Math.PI;
+        var pitch = parseFloat(calibArr[1]) * (180/pi)
+        var yaw = parseFloat(calibArr[2]) * (180/pi)
+        if (pitch > 0) {
+          var pitch_str = Math.abs(pitch).toFixed(1).concat('° 上')
+        } else {
+          var pitch_str = Math.abs(pitch).toFixed(1).concat('° 下')
+        }
+        if (yaw > 0) {
+          var yaw_str = Math.abs(yaw).toFixed(1).concat('° 右')
+        } else {
+          var yaw_str = Math.abs(yaw).toFixed(1).concat('° 左')
+        }
+        text = text.concat("\n\n设备朝向 ", pitch_str, ' and ', yaw_str, '. ')
+      }
+      return text;
+    }
+
     renderDeviceSettings() {
         const {
             expandedCell,
@@ -464,6 +491,7 @@ class Settings extends Component {
             params: {
                 DongleId: dongleId,
                 Passive: isPassive,
+                CalibrationParams: calibrationParams,
             },
             isOffroad,
         } = this.props;
@@ -486,7 +514,7 @@ class Settings extends Component {
                             type='custom'
                             title='摄像头校准'
                             iconSource={ Icons.calibration }
-                            description='摄像头是一直在后台自动校准的，只有当您的设备提示校准无效或者您将设备安装至不同的车辆/位置时，才需要重新校准。'
+                            description={ this.calib_description(calibrationParams) }
                             isExpanded={ expandedCell == 'calibration' }
                             handleExpanded={ () => this.handleExpanded('calibration') }>
                             <X.Button
@@ -627,10 +655,7 @@ class Settings extends Component {
                             iconSource={ Icons.developer }
                             descriptionExtra={
                               <X.Text color='white' size='tiny'>
-                                  使用来自开源社区开发维护的功能（未通过官方标准安全验证）{'\n'}
-                                  * 通用车型支持{'\n'}
-                                  * 丰田车型支持断开 DSU 模块{'\n'}
-                                  * 油门踏板拦截器支持{'\n'}
+                                  使用来自开源社区开发维护的功能，这些软硬件不受官方支持维护，有可能不符合安全标准，请谨慎使用{'\n'}
                               </X.Text>
                             }
                             isExpanded={ expandedCell == 'communityFeatures' }
