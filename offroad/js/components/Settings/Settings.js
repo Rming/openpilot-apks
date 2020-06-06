@@ -464,16 +464,16 @@ class Settings extends Component {
         var pitch = parseFloat(calibArr[1]) * (180/pi)
         var yaw = parseFloat(calibArr[2]) * (180/pi)
         if (pitch > 0) {
-          var pitch_str = Math.abs(pitch).toFixed(1).concat('° 上')
+          var pitch_str = '偏上 '.concat(Math.abs(pitch).toFixed(1)).concat('°')
         } else {
-          var pitch_str = Math.abs(pitch).toFixed(1).concat('° 下')
+          var pitch_str = '偏下 '.concat(Math.abs(pitch).toFixed(1)).concat('°')
         }
         if (yaw > 0) {
-          var yaw_str = Math.abs(yaw).toFixed(1).concat('° 右')
+          var yaw_str = '偏右 '.concat(Math.abs(yaw).toFixed(1)).concat('°')
         } else {
-          var yaw_str = Math.abs(yaw).toFixed(1).concat('° 左')
+          var yaw_str = '偏左 '.concat(Math.abs(yaw).toFixed(1)).concat('°')
         }
-        text = text.concat("\n\n设备朝向 ", pitch_str, ' and ', yaw_str, '. ')
+        text = text.concat("\n\n设备朝向：", pitch_str, '，', yaw_str)
       }
       return text;
     }
@@ -531,7 +531,7 @@ class Settings extends Component {
                             type='custom'
                             title='前置摄像头'
                             iconSource={ Icons.monitoring }
-                            description='Preview the driver facing camera to help optimize device mounting position for best driver monitoring experience. (offroad use only)'
+                            description='预览驾驶员监控摄像头画面，方便调整设备安装位置，更好的使用驾驶员监控功能（仅限停车时使用）。'
                             isExpanded={ expandedCell == 'driver_view_enabled' }
                             handleExpanded={ () => this.handleExpanded('driver_view_enabled') } >
                             <X.Button
